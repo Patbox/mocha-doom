@@ -155,6 +155,7 @@ import static m.fixed_t.FRACBITS;
 import static m.fixed_t.MAPFRACUNIT;
 import mochadoom.Engine;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import n.DoomSystemNetworking;
 import n.DummyNetworkDriver;
 import p.AbstractLevelLoader;
@@ -241,6 +242,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
     public final event_t[] events = new event_t[MAXEVENTS];
     public int eventhead;
     public int eventtail;
+
+    public boolean runLoop = false;
 
     /**
      * D_PostEvent
@@ -443,7 +446,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         if (!wipe) {
             //System.out.print("Tick "+gametic+"\t");
             //System.out.print(players[0]);
-            Engine.updateFrame(); // page flip or blit buffer
+            SystemHandler.instance.updateFrame(); // page flip or blit buffer
             return;
         }
 
@@ -467,7 +470,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             soundDriver.UpdateSound();
             soundDriver.SubmitSound();             // update sounds after one wipe tic.
             menu.Drawer();                    // menu is drawn even on top of wipes
-            Engine.updateFrame();             // page flip or blit buffer
+            SystemHandler.instance.updateFrame();             // page flip or blit buffer
         } while (!done);
     }
 
@@ -510,6 +513,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
                 BeginRecording();
             }
         }
+        this.runLoop = true;
 
         M_CheckParm:
         {
@@ -529,7 +533,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             view = sceneRenderer.getView();
         }
 
-        while (true) {
+        while (this.runLoop) {
             // frame syncronous IO operations
             I_StartFrame:
             ;
@@ -2860,7 +2864,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         {
             if (!doomSystem.GenerateAlert(Strings.MODIFIED_GAME_TITLE, Strings.MODIFIED_GAME_DIALOG, true)) {
                 wadLoader.CloseAllHandles();
-                System.exit(-2);
+                SystemHandler.instance.systemExit(-2);
             }
         }
 

@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import utils.ResourceIO;
 
 /**
@@ -163,7 +164,7 @@ public class CVarManager {
             LOGGER.log(Level.INFO, String.format("Found response file %s, read %d command line variables", filename, r.cVarCount));
         } else {
             LOGGER.log(Level.WARNING, String.format("No such response file %s!", filename));
-            System.exit(1);
+            SystemHandler.instance.systemExit(1);
         }
     }
 

@@ -112,6 +112,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 
 public class DoomSystem implements IDoomSystem {
 
@@ -158,7 +159,13 @@ public class DoomSystem implements IDoomSystem {
     //
     @Override
     public void Quit() {
-        //DM.CheckDemoStatus();
+        close();
+        SystemHandler.instance.systemExit(0);
+    }
+
+    public void close() {
+        DM.runLoop = false;
+        DM.CheckDemoStatus();
         try {
             DM.QuitNetGame();
         } catch (IOException e) {
@@ -168,11 +175,11 @@ public class DoomSystem implements IDoomSystem {
         /**
          * In Java we are not locked for exit until everything is shut down
          */
-        //DM.soundDriver.ShutdownSound();
-        //DM.music.ShutdownMusic();
+        DM.soundDriver.ShutdownSound();
+        DM.music.ShutdownMusic();
         DM.commit();
         DM.CM.SaveDefaults();
-        System.exit(0);
+        DM.wadLoader.CloseAllHandles();
     }
 
     /**
@@ -235,7 +242,7 @@ public class DoomSystem implements IDoomSystem {
         }
         // DM.VI.ShutdownGraphics();
 
-        System.exit(-1);
+        SystemHandler.instance.systemExit(-1);
     }
 
     @Override
@@ -253,7 +260,7 @@ public class DoomSystem implements IDoomSystem {
         //G_CheckDemoStatus();
         //D_QuitNetGame ();
         //I_ShutdownGraphics();
-        System.exit(-1);
+        SystemHandler.instance.systemExit(-1);
     }
 
     // This particular implementation will generate a popup box.//

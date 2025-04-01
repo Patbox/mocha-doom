@@ -20,6 +20,7 @@ import m.Settings;
 import static m.fixed_t.MAPFRACUNIT;
 import mochadoom.Engine;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import rr.ISpriteManager;
 import rr.line_t;
 import utils.C2JUtils;
@@ -451,7 +452,7 @@ public abstract class UnifiedGameMap implements ThinkerList {
                 StartButton(line, w, texture, time);
             } else {
                 LOGGER.log(Level.SEVERE, "P_StartButton: no button slots left!");
-                System.exit(1);
+                SystemHandler.instance.systemExit(1);
             }
         }
 

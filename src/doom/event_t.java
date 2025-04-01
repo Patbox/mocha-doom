@@ -26,6 +26,8 @@ import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+
+import mochadoom.SystemHandler;
 import utils.C2JUtils;
 
 @FunctionalInterface
@@ -449,11 +451,7 @@ public interface event_t {
         }
 
         public void resetIn(Robot robot, Point windowOffset, int centreX, int centreY) {
-            // Mark that the next event will be from robot
-            robotMove = true;
-
-            // Move the mouse to the window center
-            robot.mouseMove(windowOffset.x + centreX, windowOffset.y + centreY);
+            SystemHandler.instance.resetIn(this, robot, windowOffset, centreX, centreY);
         }
 
         @Override

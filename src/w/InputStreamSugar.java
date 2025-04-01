@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import mochadoom.SystemHandler;
 import utils.C2JUtils;
 
 /**
@@ -46,49 +48,7 @@ public class InputStreamSugar {
      */
     public static final InputStream createInputStreamFromURI(String resource,
             ZipEntry entry, int type) {
-
-        InputStream is = null;
-        URL u;
-
-        // No entry specified or no zip type, try everything BUT zip.
-        if (entry == null || !C2JUtils.flags(type, ZIP_FILE)) {
-            is = getDirectInputStream(resource);
-        } else {
-            // Entry specified AND type specified to be zip
-            // We might want to open even a zip file without looking
-            // for any particular entry.
-            if (entry != null && C2JUtils.flags(type, ZIP_FILE)) {
-
-                ZipInputStream zis;
-                // Try it as a NET zip file
-                try {
-                    u = new URI(resource).toURL();
-                    zis = new ZipInputStream(u.openStream());
-                } catch (Exception e) {
-                    // Local zip file?
-                    try {
-                        // Open resource as local file-backed zip input stream,
-                        // and search proper entry.
-                        zis = new ZipInputStream(new FileInputStream(resource));
-                    } catch (Exception e1) {
-                        // Well, it's not that either.
-                        // At this point we almost ran out of options
-                        // Try a local file and that's it.
-                        is = getDirectInputStream(resource);
-                        return is;
-                    }
-                }
-
-                // All OK?
-                is = getZipEntryStream(zis, entry.getName());
-                if (is != null) {
-                    return is;
-                }
-            }
-        }
-
-        // At this point, you'll either get a stream or jack.
-        return getDirectInputStream(resource);
+        return SystemHandler.instance.createInputStreamFromURI(resource, entry, type);
     }
 
     /** Match zip entries in a ZipInputStream based only on their name.
@@ -100,7 +60,7 @@ public class InputStreamSugar {
      * @param entryname
      * @return
      */
-    private static InputStream getZipEntryStream(ZipInputStream zis, String entryname) {
+    public static InputStream getZipEntryStream(ZipInputStream zis, String entryname) {
 
         ZipEntry ze = null;
         try {
@@ -124,25 +84,7 @@ public class InputStreamSugar {
     }
 
     private final static InputStream getDirectInputStream(String resource) {
-        InputStream is = null;
-        URL u;
-
-        try { // Is it a net resource?
-            u = new URI(resource).toURL();
-            is = u.openStream();
-        } catch (Exception e) {
-            // OK, not a valid URL or no network. We don't care.
-            // Try opening as a local file.
-            try {
-                is = new FileInputStream(resource);
-            } catch (FileNotFoundException e1) {
-                // Well, it's not that either.
-                // At this point we really ran out of options
-                // and you'll get null
-            }
-        }
-
-        return is;
+        return SystemHandler.instance.getDirectInputStream(resource);
     }
 
     /**
@@ -164,83 +106,7 @@ public class InputStreamSugar {
     public static final InputStream streamSeek(InputStream is, long pos,
             long size, String uri, ZipEntry entry, int type)
             throws IOException {
-        if (is == null) {
-            return is;
-        }
-
-        // If we know our actual position in the stream, we can aid seeking
-        // forward
-
-        /*
-         * Too buggy :-/ pity if (knownpos>=0 && knownpos<=pos){ if
-         * (pos==knownpos) return is; try{ final long mustskip=pos-knownpos;
-         * long skipped=0; while (skipped<mustskip){
-         * skipped+=is.skip(mustskip-skipped);
-         * System.out.printf("Must skip %d skipped %d\n",mustskip,skipped); }
-         * return is; } catch (Exception e){ // We couldn't skip cleanly.
-         * Swallow up and try normally. System.err.println("Couldn't skip"); } }
-         */
-        // This is a more reliable method, although it's less than impressive in
-        // results.
-        if (size > 0) {
-            try {
-                long available = is.available();
-                long guesspos = size - available;
-                // The stream is at a position before or equal to
-                // our desired one. We can attempt skipping forward.
-                if (guesspos > 0 && guesspos <= pos) {
-                    long skipped = 0;
-                    long mustskip = pos - guesspos;
-                    // Repeat skipping until proper amount reached
-                    while (skipped < mustskip) {
-                        skipped += is.skip(mustskip - skipped);
-                    }
-                    return is;
-                }
-            } catch (Exception e) {
-                // We couldn't skip cleanly. Swallow up and try normally.
-            }
-        }
-
-        // Cast succeeded
-        if (is instanceof FileInputStream) {
-            try {
-                ((FileInputStream) is).getChannel().position(pos);
-                return is;
-            } catch (IOException e) {
-                // Ouch. Do a dumb close & reopening.
-                is.close();
-                is = createInputStreamFromURI(uri, null, 1);
-                is.skip(pos);
-                return is;
-            }
-        }
-
-        // Cast succeeded
-        if (is instanceof ZipInputStream) {
-            // ZipInputStreams are VERY dumb. so...
-            is.close();
-            is = createInputStreamFromURI(uri, entry, type);
-            is.skip(pos);
-            return is;
-
-        }
-
-        try { // Is it a net resource? We have to reopen it :-/
-            // long a=System.nanoTime();
-            URL u = new URI(uri).toURL();
-            InputStream nis = u.openStream();
-            nis.skip(pos);
-            is.close();
-            // long b=System.nanoTime();
-            // System.out.printf("Network stream seeked WITH closing %d\n",(b-a)/1000);
-            return nis;
-        } catch (Exception e) {
-
-        }
-
-        // TODO: zip handling?
-        return is;
+        return SystemHandler.instance.streamSeek(is, pos, size, uri, entry, type);
     }
 
     public static List<ZipEntry> getAllEntries(ZipInputStream zis)

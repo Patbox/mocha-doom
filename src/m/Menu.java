@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import rr.patch_t;
 import timing.DelegateTicker;
 import utils.C2JUtils;
@@ -231,15 +232,25 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
     /** First initialize those */
     private void initMenuItems() {
-        MainMenu = new menuitem_t[]{
-            new menuitem_t(1, "M_NGAME", NewGame, SC_N),
-            new menuitem_t(1, "M_OPTION", Options, SC_O),
-            new menuitem_t(1, "M_LOADG", LoadGame, SC_L),
-            new menuitem_t(1, "M_SAVEG", SaveGame, SC_S),
-            // Another hickup with Special edition.
-            new menuitem_t(1, "M_RDTHIS", ReadThis, SC_R),
-            new menuitem_t(1, "M_QUITG", QuitDOOM, SC_Q)
-        };
+        if (SystemHandler.instance.allowSaves()) {
+            MainMenu = new menuitem_t[]{
+                    new menuitem_t(1, "M_NGAME", NewGame, SC_N),
+                    new menuitem_t(1, "M_OPTION", Options, SC_O),
+                    new menuitem_t(1, "M_LOADG", LoadGame, SC_L),
+                    new menuitem_t(1, "M_SAVEG", SaveGame, SC_S),
+                    // Another hickup with Special edition.
+                    new menuitem_t(1, "M_RDTHIS", ReadThis, SC_R),
+                    new menuitem_t(1, "M_QUITG", QuitDOOM, SC_Q)
+            };
+        } else {
+            MainMenu = new menuitem_t[]{
+                    new menuitem_t(1, "M_NGAME", NewGame, SC_N),
+                    new menuitem_t(1, "M_OPTION", Options, SC_O),
+                    // Another hickup with Special edition.
+                    new menuitem_t(1, "M_RDTHIS", ReadThis, SC_R),
+                    new menuitem_t(1, "M_QUITG", QuitDOOM, SC_Q)
+            };
+        }
 
         MainDef = new menu_t(main_end, null, MainMenu, DrawMainMenu, 97, 64, 0);
 
@@ -1839,7 +1850,9 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
     /** main_e enum; */
     private static final int newgame = 0, options = 1, loadgam = 2, savegame = 3,
-            readthis = 4, quitdoom = 5, main_end = 6;
+            readthis = SystemHandler.instance.allowSaves() ? 4 : 2,
+            quitdoom = SystemHandler.instance.allowSaves() ? 5 : 3,
+            main_end = SystemHandler.instance.allowSaves() ? 6 : 4;
 
     /** read_e enum */
     private static final int rdthsempty1 = 0, read1_end = 1;

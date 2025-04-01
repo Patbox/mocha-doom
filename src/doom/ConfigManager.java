@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import m.Settings;
 import static m.Settings.SETTINGS_MAP;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import utils.ParseString;
 import utils.QuoteType;
 import utils.ResourceIO;
@@ -191,6 +192,10 @@ public class ConfigManager {
     }
 
     public void SaveDefaults() {
+        if (!SystemHandler.instance.allowSaves()) {
+            return;
+        }
+
         SETTINGS_MAP.forEach((file, settings) -> {
             // skip writing settings which are not part of the loaded config files,
             // this helps to not overwrite default.cfg with empty content in case we're using the -config argument

@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 import m.MenuMisc;
 import m.Settings;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 
 /**
  * Base for HiColor and TrueColor parallel renderers
@@ -41,8 +42,7 @@ abstract class SoftwareParallelVideoRenderer<T, V> extends SoftwareGraphicsSyste
     private static final int[] EMPTY_INT_PALETTED_BLOCK = new int[0];
     private static final short[] EMPTY_SHORT_PALETTED_BLOCK = new short[0];
     protected static final int PARALLELISM = Engine.getConfig().getValue(Settings.parallelism_realcolor_tint, Integer.class);
-    protected static final GraphicsConfiguration GRAPHICS_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getDefaultScreenDevice().getDefaultConfiguration();
+    protected static final GraphicsConfiguration GRAPHICS_CONF = SystemHandler.instance.getGraphicsConfiguration();
 
     protected final boolean GRAYPAL_SET = Engine.getCVM().bool(CommandVariable.GREYPAL);
 

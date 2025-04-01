@@ -28,6 +28,7 @@ import m.Settings;
 import static m.fixed_t.FRACUNIT;
 import mochadoom.Engine;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import p.AbstractLevelLoader;
 import static p.ActiveStates.NOP;
 import static p.ActiveStates.T_PlatRaise;
@@ -221,7 +222,7 @@ public interface ActionsPlats extends ActionsMoveEvents, ActionsUseEvents {
             AddActivePlat(plat);
         } else {
             Plats.LOGGER.log(Level.SEVERE, "P_AddActivePlat: no more plats!");
-            System.exit(1);
+            SystemHandler.instance.systemExit(1);
         }
     }
 
@@ -239,7 +240,7 @@ public interface ActionsPlats extends ActionsMoveEvents, ActionsUseEvents {
         }
 
         Plats.LOGGER.log(Level.SEVERE, "P_RemoveActivePlat: can't find plat!");
-        System.exit(1);
+        SystemHandler.instance.systemExit(1);
     }
 
     default void ClearPlatsBeforeLoading() {

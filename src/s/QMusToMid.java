@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 
 public class QMusToMid {
 
@@ -99,7 +100,7 @@ public class QMusToMid {
             track[MIDItrack].data[(int) pos] = byte_;
         } else {
             LOGGER.log(Level.SEVERE, "ERROR: Track buffer full. Increase the track buffer size (option -size).");
-            System.exit(1);
+            SystemHandler.instance.systemExit(1);
         }
         track[MIDItrack].current++;
     }

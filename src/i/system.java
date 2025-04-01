@@ -41,6 +41,7 @@ package i;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 
 public class system {
 
@@ -190,6 +191,6 @@ byte*	I_AllocLow(int length)
         //G_CheckDemoStatus();
         //D_QuitNetGame ();
         //I_ShutdownGraphics();
-        System.exit(-1);
+        SystemHandler.instance.systemExit(-1);
     }
 }

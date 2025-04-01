@@ -67,10 +67,6 @@ public class WadLoader implements IWadLoader {
         zone = new HashMap<>();
         wadfiles = new ArrayList<>();
         this.I = new DummySystem();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            CloseAllHandles();
-        }));
     }
 
     //// FIELDS

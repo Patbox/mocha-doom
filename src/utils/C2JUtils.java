@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import p.Resettable;
 import w.InputStreamSugar;
 
@@ -178,7 +179,7 @@ public final class C2JUtils {
             }
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, String.format("Failure to allocate %d objects of class %s", os.length, c.getName()), e);
-            System.exit(-1);
+            SystemHandler.instance.systemExit(-1);
         }
     }
 
@@ -201,7 +202,7 @@ public final class C2JUtils {
             }
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, String.format("Failure to allocate %d objects of class %s", os.length, c.getName()), e);
-            System.exit(-1);
+            SystemHandler.instance.systemExit(-1);
         }
     }
 
@@ -235,7 +236,7 @@ public final class C2JUtils {
             }
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, String.format("Failure to instantiate %d objects of class %s", os.length, c.getName()), e);
-            System.exit(-1);
+            SystemHandler.instance.systemExit(-1);
         }
 
         return os;
@@ -268,7 +269,7 @@ public final class C2JUtils {
             }
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, String.format("Failure to instantiate %d objects of class %s", os.length, c.getName()), e);
-            System.exit(-1);
+            SystemHandler.instance.systemExit(-1);
         }
 
         return os;
@@ -294,7 +295,7 @@ public final class C2JUtils {
             }
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, String.format("Failure to allocate %d objects of class %s", os.length, c.getName()), e);
-            System.exit(-1);
+            SystemHandler.instance.systemExit(-1);
         }
     }
 
@@ -370,86 +371,11 @@ public final class C2JUtils {
     }
 
     public static boolean testReadAccess(String uri) {
-        InputStream in;
-
-        // This is bullshit.
-        if (uri == null) {
-            return false;
-        }
-        if (uri.length() == 0) {
-            return false;
-        }
-
-        try {
-            in = new FileInputStream(uri);
-        } catch (FileNotFoundException e) {
-            // Not a file...
-            URL u;
-            try {
-                u = new URI(uri).toURL();
-            } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e1) {
-                return false;
-            }
-            try {
-                in = u.openConnection().getInputStream();
-            } catch (IOException e1) {
-                return false;
-            }
-
-        }
-
-        if (in != null) {
-            try {
-                in.close();
-            } catch (IOException e) {
-
-            }
-            return true;
-        }
-        // All is well. Go on...
-        return true;
-
+        return SystemHandler.instance.testReadAccess(uri);
     }
 
     public static boolean testWriteAccess(String uri) {
-        OutputStream out;
-
-        // This is bullshit.
-        if (uri == null) {
-            return false;
-        }
-        if (uri.length() == 0) {
-            return false;
-        }
-
-        try {
-            out = new FileOutputStream(uri);
-        } catch (FileNotFoundException e) {
-            // Not a file...
-            URL u;
-            try {
-                u = new URI(uri).toURL();
-            } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e1) {
-                return false;
-            }
-            try {
-                out = u.openConnection().getOutputStream();
-            } catch (IOException e1) {
-                return false;
-            }
-
-        }
-
-        if (out != null) {
-            try {
-                out.close();
-            } catch (IOException e) {
-
-            }
-            return true;
-        }
-        // All is well. Go on...
-        return true;
+        return SystemHandler.instance.testWriteAccess(uri);
     }
 
     /**
@@ -770,7 +696,7 @@ public final class C2JUtils {
             return (T[]) Array.newInstance(c, size);
         } catch (NegativeArraySizeException e) {
             LOGGER.log(Level.SEVERE, String.format("Failure to allocate %d objects of class %s", size, c.getName()), e);
-            System.exit(-1);
+            SystemHandler.instance.systemExit(-1);
         }
 
         return null;
@@ -788,7 +714,7 @@ public final class C2JUtils {
             return (T[]) Array.newInstance(c, size);
         } catch (NegativeArraySizeException e) {
             LOGGER.log(Level.SEVERE, String.format("Failure to allocate %d objects of class %s", size, c.getName()), e);
-            System.exit(-1);
+            SystemHandler.instance.systemExit(-1);
         }
 
         return null;
@@ -802,53 +728,7 @@ public final class C2JUtils {
      * @return an int with flags set according to InputStreamSugar
      */
     public static int guessResourceType(String uri) {
-
-        int result = 0;
-        InputStream in;
-
-        // This is bullshit.
-        if (uri == null || uri.length() == 0) {
-            return InputStreamSugar.BAD_URI;
-        }
-
-        try {
-            in = new FileInputStream(new File(uri));
-            // It's a file
-            result |= InputStreamSugar.FILE;
-        } catch (FileNotFoundException e) {
-            // Not a file...
-            URL u;
-            try {
-                u = new URI(uri).toURL();
-            } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e1) {
-                return InputStreamSugar.BAD_URI;
-            }
-            try {
-                in = u.openConnection().getInputStream();
-                result |= InputStreamSugar.NETWORK_FILE;
-            } catch (IOException e1) {
-                return InputStreamSugar.BAD_URI;
-            }
-
-        }
-
-        // Try guessing if it's a ZIP file. A bit lame, really
-        // TODO: add proper validation, and maybe MIME type checking
-        // for network streams, for cases that we can't really
-        // tell from extension alone.
-        if (checkForExtension(uri, "zip")) {
-            result |= InputStreamSugar.ZIP_FILE;
-
-        }
-
-        try {
-            in.close();
-        } catch (IOException e) {
-
-        }
-
-        // All is well. Go on...
-        return result;
+        return SystemHandler.instance.guessResourceType(uri);
     }
 
     private C2JUtils() {

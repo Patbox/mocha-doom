@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 
 /**
  * Resource IO to automate read/write on configuration/resources
@@ -40,28 +41,20 @@ public class ResourceIO {
 
     private static final Logger LOGGER = Loggers.getLogger(ResourceIO.class.getName());
 
-    private final Path file;
+    private final String file;
     private final Charset charset = Charset.forName("US-ASCII");
 
-    public ResourceIO(final File file) {
-        this.file = file.toPath();
-    }
-
-    public ResourceIO(final Path file) {
-        this.file = file;
-    }
-
     public ResourceIO(final String path) {
-        this.file = FileSystems.getDefault().getPath(path);
+        this.file = path;
     }
 
     public boolean exists() {
-        return Files.exists(file);
+        return SystemHandler.instance.fileExists(file);
     }
 
     public boolean readLines(final Consumer<String> lineConsumer) {
-        if (Files.exists(file)) {
-            try ( BufferedReader reader = Files.newBufferedReader(file, charset)) {
+        if (SystemHandler.instance.fileExists(file)) {
+            try ( BufferedReader reader = SystemHandler.instance.getFileBufferedReader(file, charset)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     lineConsumer.accept(line);
@@ -78,7 +71,11 @@ public class ResourceIO {
     }
 
     public boolean writeLines(final Supplier<String> lineSupplier, final OpenOption... options) {
-        try ( BufferedWriter writer = Files.newBufferedWriter(file, charset, options)) {
+        if (!SystemHandler.instance.allowSaves()) {
+            return true;
+        }
+
+        try ( BufferedWriter writer = SystemHandler.instance.getFileBufferedWriter(file, charset, options)) {
             String line;
             while ((line = lineSupplier.get()) != null) {
                 writer.write(line, 0, line.length());

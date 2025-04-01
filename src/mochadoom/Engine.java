@@ -47,6 +47,7 @@ public class Engine {
      */
     public static void main(final String[] argv) throws IOException {
         LOGGER.log(Level.INFO, Strings.MOCHA_DOOM_TITLE);
+        SystemHandler.instance = new DefaultSystemHandler();
         final Engine local;
         synchronized (Engine.class) {
             local = new Engine(argv);
@@ -170,11 +171,19 @@ public class Engine {
         return local;
     }
 
-    public static CVarManager getCVM() {
+    public static CVarManager _getCVM() {
         return getEngine().cvm;
     }
 
-    public static ConfigManager getConfig() {
+    public static ConfigManager _getConfig() {
         return getEngine().cm;
+    }
+
+    public static CVarManager getCVM() {
+        return SystemHandler.instance.getCvars();
+    }
+
+    public static ConfigManager getConfig() {
+        return SystemHandler.instance.getConfig();
     }
 }
