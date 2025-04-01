@@ -143,6 +143,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.locks.LockSupport;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -458,10 +459,20 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         wipestart = ticker.GetTime() - 1;
 
         do {
-            do {
+            //var nanoDelay = ticker.getNanosUntilNextTickCheck(1);
+            nowtime = ticker.GetTime();
+            tics = nowtime - wipestart;
+
+            while (tics == 0) {
                 nowtime = ticker.GetTime();
                 tics = nowtime - wipestart;
-            } while (tics == 0); // Wait until a single tic has passed.
+
+                Thread.yield();
+                //if (nanoDelay > 0) {
+                //    Thread.yield();
+                //    LockSupport.parkNanos(SystemHandler.instance, nanoDelay);
+                //}
+            } // Wait until a single tic has passed.
             wipestart = nowtime;
             Wiper.Wipe wipeType = CM.equals(Settings.scale_melt, Boolean.TRUE)
                     ? Wiper.Wipe.ScaledMelt : Wiper.Wipe.Melt;
@@ -536,6 +547,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         while (this.runLoop) {
             // frame syncronous IO operations
             I_StartFrame:
+            SystemHandler.instance.mainLoopStart();
             ;
 
             // process one or more tics
@@ -569,6 +581,9 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             } else {
                 gameNetworking.TryRunTics(); // will run at least one tic (in NET)
             }
+
+            SystemHandler.instance.mainLoopPostTic();
+
             S_UpdateSounds:
             {
                 doomSound.UpdateSounds(players[consoleplayer].mo); // move positional sounds
@@ -586,6 +601,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             // Update sound output.
             soundDriver.SubmitSound();
             //#endif
+            SystemHandler.instance.mainLoopEnd();
         }
     }
 
@@ -3569,7 +3585,10 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         int stoptic;
 
         stoptic = ticker.GetTime() + 2;
+       // int nanoDelay = ticker.getNanosUntilNextTickCheck(2);
         while (ticker.GetTime() < stoptic) {
+            Thread.yield();
+            //LockSupport.parkNanos(SystemHandler.instance, nanoDelay);
         }
         //videoInterface.StartTic ();
 
@@ -3867,6 +3886,13 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
                 menu.Ticker();
                 return;
             }
+            Thread.yield();
+
+            //var nanoDelay = ticker.getNanosUntilNextTickCheck(1);
+            //if (nanoDelay > 0) {
+            //    Thread.yield();
+            //    LockSupport.parkNanos(SystemHandler.instance, nanoDelay);
+            //}
         }
 
         // run the count * ticdup dics

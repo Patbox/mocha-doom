@@ -26,12 +26,17 @@ public class NanoTicker
         if (basetime == 0) {
             basetime = tp;
         }
-        newtics = (int) (((tp - basetime) * TICRATE) / 1000000000);// + tp.tv_usec*TICRATE/1000000;
+        newtics = (int) (((tp - basetime) * TICRATE) / 1_000_000_000);// + tp.tv_usec*TICRATE/1000000;
         if (newtics < oldtics) {
             LOGGER.log(Level.WARNING, String.format("Timer discrepancies detected : %d", (++discrepancies)));
             return oldtics;
         }
         return (oldtics = newtics);
+    }
+
+    @Override
+    public int getNanosUntilNextTickCheck(int offset) {
+        return 10_000;
     }
 
     protected volatile long basetime = 0;

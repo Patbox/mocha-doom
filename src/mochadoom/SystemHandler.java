@@ -42,6 +42,10 @@ public class SystemHandler {
         BufferedReader getFileBufferedReader(String file, Charset charset) throws IOException;
 
         BufferedWriter getFileBufferedWriter(String file, Charset charset, OpenOption[] options) throws IOException;
+
+        default void mainLoopStart() {};
+        default void mainLoopEnd() {};
+        default void mainLoopPostTic() {};
     }
 
 }
