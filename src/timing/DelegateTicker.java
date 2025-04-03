@@ -32,11 +32,6 @@ public class DelegateTicker implements ITicker {
         return currentTicker.GetTime();
     }
 
-    @Override
-    public int getNanosUntilNextTickCheck(int target) {
-        return currentTicker.getNanosUntilNextTickCheck(target);
-    }
-
     public void changeTicker() {
         if (currentTicker == nt) {
             currentTicker = mt;

@@ -1,11 +1,38 @@
 package i;
 
 public interface IDiskDrawer extends IDrawer {
+    public static IDiskDrawer NOOP = new IDiskDrawer() {
+        @Override
+        public void setReading(int reading) {
+
+        }
+
+        @Override
+        public boolean isReading() {
+            return false;
+        }
+
+        @Override
+        public void Init() {
+
+        }
+
+        @Override
+        public boolean justDoneReading() {
+            return false;
+        }
+
+        @Override
+        public void Drawer() {
+
+        }
+    };
+
 
     /**
      * Set a timeout (in tics) for displaying the disk icon
      *
-     * @param timeout
+     * @param reading
      */
     void setReading(int reading);
 

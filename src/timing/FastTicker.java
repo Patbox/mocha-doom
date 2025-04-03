@@ -11,10 +11,5 @@ public class FastTicker implements ITicker {
         return fasttic++;
     }
 
-    @Override
-    public int getNanosUntilNextTickCheck(int target) {
-        return 0;
-    }
-
     protected volatile int fasttic = 0;
 }

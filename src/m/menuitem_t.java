@@ -20,19 +20,19 @@ public class menuitem_t {
     /**
      * 0 = no cursor here, 1 = ok, 2 = arrows ok
      */
-    int status;
+    public int status;
 
-    String name;
+    public String name;
 
     // choice = menu item #.
     // if status = 2,
     //   choice=0:leftarrow,1:rightarrow
     // MAES: OK... to probably we need some sort of "MenuRoutine" class for this one.
     // void	(*routine)(int choice);
-    MenuRoutine routine;
+    public MenuRoutine routine;
 
     /**
      * hotkey in menu
      */
-    Signals.ScanCode alphaKey;
+    public Signals.ScanCode alphaKey;
 }

@@ -2,7 +2,7 @@ package i;
 
 public final class Strings {
 
-    public static final String MOCHA_DOOM_TITLE = "Vanilla Mocha Doom Alpha 1.6.15";
+    public static final String MOCHA_DOOM_TITLE = "Modified Vanilla Mocha Doom";
 
     public static final String MODIFIED_GAME_TITLE = "Modified game alert";
 

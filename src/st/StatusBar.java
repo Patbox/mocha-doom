@@ -693,7 +693,7 @@ public class StatusBar extends AbstractStatusBar {
     public void refreshBackground() {
 
         if (st_statusbaron[0]) {
-            DOOM.graphicSystem.DrawPatchScaled(SB, sbar, DOOM.vs, ST_X, 0, V_SAFESCALE | V_NOSCALESTART);
+            DOOM.graphicSystem.DrawPatchCenteredScaled(SB, sbar, DOOM.vs, ST_X, 0, V_SAFESCALE | V_NOSCALESTART);
             //V.DrawPatch(ST_X, 0, BG, sbar);
 
             if (DOOM.netgame) {

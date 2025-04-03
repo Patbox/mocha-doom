@@ -1503,7 +1503,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
 
         // background - draw it to screen 1 for quick redraw.
         bg = DOOM.wadLoader.CacheLumpName(name, PU_CACHE, patch_t.class);
-        DOOM.graphicSystem.DrawPatchScaled(BG, bg, DOOM.vs, 0, 0, V_SAFESCALE);
+        DOOM.graphicSystem.DrawPatchCenteredScaled(BG, bg, DOOM.vs, 0, 0, V_SAFESCALE);
 
         // UNUSED unsigned char *pic = screens[1];
         // if (gamemode == commercial)

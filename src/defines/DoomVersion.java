@@ -16,6 +16,8 @@
  */
 package defines;
 
+import doom.CVarManager;
+import doom.CommandVariable;
 import doom.DoomMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,6 +95,24 @@ public enum DoomVersion {
 
         // It's either invalid or we can't read it.
         // Fuck that.
-        return null;
+        return C2JUtils.testReadAccess(doomwaddir + iwad) ? GameMode.indetermined : null;
+    }
+
+    public static GameMode fromCvars(CVarManager cVarManager) {
+        var version = cVarManager.get(CommandVariable.VERSION, String.class, 0).orElse("");
+
+        try {
+            return GameMode.forVersion(DoomVersion.valueOf(version.trim().toUpperCase().replace('.', '_')));
+        } catch (Throwable ignored) {}
+
+        try {
+            return GameMode.forVersion(DoomVersion.valueOf(version.trim().toUpperCase() + "_WAD"));
+        } catch (Throwable ignored) {}
+
+        try {
+            return GameMode.valueOf(version.trim().toUpperCase());
+        } catch (Throwable ignored) {}
+
+        return GameMode.indetermined;
     }
 }

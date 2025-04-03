@@ -11,7 +11,6 @@ import data.sounds.sfxenum_t;
 import defines.Language_t;
 import defines.gamestate_t;
 import defines.skill_t;
-import doom.CommandVariable;
 import doom.DoomMain;
 import doom.SourceCode;
 import doom.SourceCode.M_Menu;
@@ -45,7 +44,6 @@ import g.Signals.ScanCode;
 import static g.Signals.ScanCode.*;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,7 +57,7 @@ import w.DoomIO;
 
 public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(Menu.class.getName());
+    public static Logger LOGGER = Loggers.getLogger(Menu.class.getName());
 
     ////////////////// CONSTRUCTOR ////////////////
     public Menu(DoomMain<T, V> DOOM) {
@@ -67,14 +65,14 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     /** The fonts  ... must "peg" them to those from HU */
-    patch_t[] hu_font = new patch_t[HU_FONTSIZE];
+    public patch_t[] hu_font = new patch_t[HU_FONTSIZE];
 
     /** WTF?! */
     boolean message_dontfuckwithme;
 
     // int mouseSensitivity; // has default
     /** Show messages has default, 0 = off, 1 = on */
-    private boolean showMessages = false;
+    public boolean showMessages = false;
 
     /**
      * showMessages can be read outside of Menu, but not modified. Menu has the
@@ -91,75 +89,75 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     /** Blocky mode, has default, 0 = high, 1 = normal */
-    int detailLevel;
+    public int detailLevel;
 
-    int screenblocks = 10; // has default
+    public int screenblocks = 10; // has default
 
     /** temp for screenblocks (0-9) */
-    int screenSize;
+    public int screenSize;
 
     /** -1 = no quicksave slot picked! */
-    int quickSaveSlot;
+    public int quickSaveSlot;
 
     /** 1 = message to be printed */
-    boolean messageToPrint;
+    public boolean messageToPrint;
 
     /** ...and here is the message string! */
-    String messageString;
+    public String messageString;
 
     /** message x & y */
-    int messx, messy;
+    public int messx, messy;
 
-    boolean messageLastMenuActive;
+    public boolean messageLastMenuActive;
 
     /** timed message = no input from user */
-    boolean messageNeedsInput;
+    public boolean messageNeedsInput;
 
     /** Probably I need some MessageRoutine interface at this point? */
     public MenuRoutine messageRoutine;
 
     /** we are going to be entering a savegame string */
-    boolean saveStringEnter;
+    public boolean saveStringEnter;
 
-    int saveSlot; // which slot to save in
+    public int saveSlot; // which slot to save in
 
-    int saveCharIndex; // which char we're editing
+    public int saveCharIndex; // which char we're editing
 
     /** old save description before edit */
-    char[] saveOldString = new char[SAVESTRINGSIZE];
+    public char[] saveOldString = new char[SAVESTRINGSIZE];
 
-    boolean inhelpscreens;
+    public boolean inhelpscreens;
 
     //int menuactive;
-    protected static final int SKULLXOFF = -32;
+    public  static int SKULLXOFF = -32;
 
-    protected static final int LINEHEIGHT = 16;
+    public  static int LINEHEIGHT = 16;
 
-    char[][] savegamestrings = new char[10][SAVESTRINGSIZE];
+    public char[][] savegamestrings = new char[10][SAVESTRINGSIZE];
 
-    String endstring = new String();
+    public String endstring = new String();
 
     //
     // MENU TYPEDEFS
     //
     /** menu item skull is on */
-    short itemOn;
+    public short itemOn;
 
     /** skull animation counter */
-    short skullAnimCounter;
+    public short skullAnimCounter;
 
     /** which skull to draw */
-    short whichSkull;
+    public short whichSkull;
 
     /**
      * graphic name of skulls warning: initializer-string for array of chars is
      * too long
      */
-    private static String[] skullName = {"M_SKULL1", "M_SKULL2"};
+    public static String[] skullName = {"M_SKULL1", "M_SKULL2"};
 
     /** current menudef */
     // MAES: pointer? array?
-    menu_t currentMenu;
+    public menu_t currentMenu;
 
     //
     // DOOM MENU
@@ -169,18 +167,18 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     /**
      * MenuRoutine class definitions, replacing "function pointers".
      */
-    MenuRoutine ChangeDetail, ChangeMessages, ChangeSensitivity, ChooseSkill,
+    public MenuRoutine ChangeDetail, ChangeMessages, ChangeSensitivity, ChooseSkill,
             EndGame, EndGameResponse, Episode, FinishReadThis, LoadGame,
             LoadSelect, MusicVol, NewGame, Options, VerifyNightmare,
             SaveSelect, SfxVol, SizeDisplay, SaveGame, Sound, QuitDOOM,
             QuitResponse, QuickLoadResponse, QuickSaveResponse, ReadThis, ReadThis2;
 
     /** DrawRoutine class definitions, replacing "function pointers". */
-    DrawRoutine DrawEpisode, DrawLoad, DrawMainMenu, DrawNewGame, DrawOptions,
+    public DrawRoutine DrawEpisode, DrawLoad, DrawMainMenu, DrawNewGame, DrawOptions,
             DrawReadThis1, DrawReadThis2, DrawSave, DrawSound;
 
     /** Initialize menu routines first */
-    private void initMenuRoutines() {
+    public void initMenuRoutines() {
         ChangeMessages = new M_ChangeMessages();
         ChangeDetail = new M_ChangeDetail();
         ChangeSensitivity = new M_ChangeSensitivity();
@@ -212,7 +210,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     /** Then drawroutines */
-    private void initDrawRoutines() {
+    public void initDrawRoutines() {
         DrawEpisode = new M_DrawEpisode();
         DrawNewGame = new M_DrawNewGame();
         DrawReadThis1 = new M_DrawReadThis1();
@@ -225,13 +223,13 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     /** Menuitem definitions. A "menu" can consist of multiple menuitems */
-    menuitem_t[] MainMenu, EpisodeMenu, NewGameMenu, OptionsMenu, ReadMenu1, ReadMenu2, SoundMenu, LoadMenu, SaveMenu;
+    public menuitem_t[] MainMenu, EpisodeMenu, NewGameMenu, OptionsMenu, ReadMenu1, ReadMenu2, SoundMenu, LoadMenu, SaveMenu;
 
     /** Actual menus. Each can point to an array of menuitems */
-    menu_t MainDef, EpiDef, NewDef, OptionsDef, ReadDef1, ReadDef2, SoundDef, LoadDef, SaveDef;
+    public menu_t MainDef, EpiDef, NewDef, OptionsDef, ReadDef1, ReadDef2, SoundDef, LoadDef, SaveDef;
 
     /** First initialize those */
-    private void initMenuItems() {
+    public void initMenuItems() {
         if (SystemHandler.instance.allowSaves()) {
             MainMenu = new menuitem_t[]{
                     new menuitem_t(1, "M_NGAME", NewGame, SC_N),
@@ -367,17 +365,9 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
         DataInputStream handle;
         int count;
         int i;
-        String name;
-
         for (i = 0; i < load_end; i++) {
-            if (DOOM.cVarManager.bool(CommandVariable.CDROM)) {
-                name = "c:\\doomdata\\" + SAVEGAMENAME + (i) + ".dsg";
-            } else {
-                name = SAVEGAMENAME + (i) + ".dsg";
-            }
-
             try {
-                handle = new DataInputStream(new BufferedInputStream(new FileInputStream(name)));
+                handle = new DataInputStream(new BufferedInputStream(SystemHandler.instance.getSaveDataInputStream(SAVEGAMENAME + (i) + ".dsg")));
                 savegamestrings[i]
                         = DoomIO.readString(handle, SAVESTRINGSIZE).toCharArray();
                 handle.close();
@@ -395,7 +385,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
      * Draw border for the savegame description. This is special in that it's
      * not "invokable" like the other drawroutines, but standalone.
      */
-    private void DrawSaveLoadBorder(int x, int y) {
+    public void DrawSaveLoadBorder(int x, int y) {
         int i;
 
         DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName("M_LSLEFT"), DOOM.vs, x - 8, y + 7);
@@ -516,7 +506,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     //
     // M_QuickSave
     //
-    private String tempstring;
+    public String tempstring;
 
     class M_QuickSaveResponse implements MenuRoutine {
 
@@ -529,7 +519,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
         }
     }
 
-    private void QuickSave() {
+    public void QuickSave() {
         if (!DOOM.usergame) {
             DOOM.doomSound.StartSound(null, sfxenum_t.sfx_oof);
             return;
@@ -650,7 +640,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     //
     // M_Episode
     //
-    private int epi;
+    public int epi;
 
     class M_VerifyNightmare implements MenuRoutine {
 
@@ -824,7 +814,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
      *
      * Actually it just counts occurences of 'n' and adds height to height.
      */
-    private int StringHeight(char[] string) {
+    public int StringHeight(char[] string) {
         int i;
         int h;
         int height = hu_font[0].height;
@@ -842,14 +832,14 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     /**
      * Find string height from hu_font chars
      */
-    private int StringHeight(String string) {
+    public int StringHeight(String string) {
         return this.StringHeight(string.toCharArray());
     }
 
     /**
      * Write a string using the hu_font
      */
-    private void WriteText(int x, int y, char[] string) {
+    public void WriteText(int x, int y, char[] string) {
         int w;
         char[] ch;
         int c;
@@ -890,7 +880,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
     }
 
-    private void WriteText(int x, int y, String string) {
+    public void WriteText(int x, int y, String string) {
         if (string == null || string.length() == 0) {
             return;
         }
@@ -933,23 +923,23 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     // These belong to the responder.
-    private int joywait = 0;
+    public int joywait = 0;
 
-    private int mousewait = 0;
+    public int mousewait = 0;
 
-    private int mousey = 0;
+    public int mousey = 0;
 
-    private int lasty = 0;
+    public int lasty = 0;
 
-    private int mousex = 0;
+    public int mousex = 0;
 
-    private int lastx = 0;
+    public int lastx = 0;
 
     @Override
     @SourceCode.Compatible
     @M_Menu.C(M_Responder)
     public boolean Responder(event_t ev) {
-        final ScanCode sc;
+        ScanCode sc;
 
         if (DOOM.use_joystick && ev.isType(evtype_t.ev_joystick) && joywait < DOOM.ticker.GetTime()) {
             // Joystick input
@@ -1177,8 +1167,8 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
                     break;
 
             }
-        } else if (sc == SC_F5 && DOOM.ticker instanceof DelegateTicker) { // Toggle ticker
-            ((DelegateTicker) DOOM.ticker).changeTicker();
+        } else if (sc == SC_F5 && DOOM.timingTicker instanceof DelegateTicker) { // Toggle ticker
+            ((DelegateTicker) DOOM.timingTicker).changeTicker();
             LOGGER.log(Level.WARNING, "Warning! Ticker changed; time reset");
             DOOM.doomSound.StartSound(null, sfxenum_t.sfx_radio);
             return true;
@@ -1460,7 +1450,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     /**
-     * M_DrawText Returns the final X coordinate HU_Init must have been called
+     * M_DrawText Returns the X coordinate HU_Init must have been called
      * to init the font. Unused?
      *
      * @param x
@@ -1551,8 +1541,8 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     class M_DrawOptions
             implements DrawRoutine {
 
-        private final String detailNames[] = {"M_GDHIGH", "M_GDLOW"};
-        private final String msgNames[] = {"M_MSGOFF", "M_MSGON"};
+        public String detailNames[] = {"M_GDHIGH", "M_GDLOW"};
+        public String msgNames[] = {"M_MSGOFF", "M_MSGON"};
 
         @Override
         public void invoke() {
@@ -1795,14 +1785,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
         @Override
         public void invoke(int choice) {
-            String name;
-
-            if (DOOM.cVarManager.bool(CommandVariable.CDROM)) {
-                name = ("c:\\doomdata\\" + SAVEGAMENAME + (choice) + ".dsg");
-            } else {
-                name = (SAVEGAMENAME + (choice) + ".dsg");
-            }
-            DOOM.LoadGame(name);
+            DOOM.LoadGame(SAVEGAMENAME + (choice) + ".dsg");
             ClearMenus();
         }
     }
@@ -1826,49 +1809,49 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     // ////////////////////// VARIOUS CONSTS //////////////////////
-    private static final sfxenum_t[] quitsounds
+    public static sfxenum_t[] quitsounds
             = {sfxenum_t.sfx_pldeth, sfxenum_t.sfx_dmpain, sfxenum_t.sfx_popain,
                 sfxenum_t.sfx_slop, sfxenum_t.sfx_telept, sfxenum_t.sfx_posit1,
                 sfxenum_t.sfx_posit3, sfxenum_t.sfx_sgtatk};
 
-    private static final sfxenum_t[] quitsounds2
+    public static sfxenum_t[] quitsounds2
             = {sfxenum_t.sfx_vilact, sfxenum_t.sfx_getpow, sfxenum_t.sfx_boscub,
                 sfxenum_t.sfx_slop, sfxenum_t.sfx_skeswg, sfxenum_t.sfx_kntdth,
                 sfxenum_t.sfx_bspact, sfxenum_t.sfx_sgtatk};
 
     /** episodes_e enum */
-    private static final int ep1 = 0, ep2 = 1, ep3 = 2, ep4 = 3, ep_end = 4;
+    public static int ep1 = 0, ep2 = 1, ep3 = 2, ep4 = 3, ep_end = 4;
 
     /** load_e enum */
-    private static final int load1 = 0, load2 = 1, load3 = 2, load4 = 3, load5 = 4,
+    public static int load1 = 0, load2 = 1, load3 = 2, load4 = 3, load5 = 4,
             load6 = 5, load_end = 6;
 
     /** options_e enum; */
-    private static final int endgame = 0, messages = 1, detail = 2, scrnsize = 3,
+    public static int endgame = 0, messages = 1, detail = 2, scrnsize = 3,
             option_empty1 = 4, mousesens = 5, option_empty2 = 6, soundvol = 7,
             opt_end = 8;
 
     /** main_e enum; */
-    private static final int newgame = 0, options = 1, loadgam = 2, savegame = 3,
+    public static int newgame = 0, options = 1, loadgam = 2, savegame = 3,
             readthis = SystemHandler.instance.allowSaves() ? 4 : 2,
             quitdoom = SystemHandler.instance.allowSaves() ? 5 : 3,
             main_end = SystemHandler.instance.allowSaves() ? 6 : 4;
 
     /** read_e enum */
-    private static final int rdthsempty1 = 0, read1_end = 1;
+    public static int rdthsempty1 = 0, read1_end = 1;
 
     /** read_2 enum */
-    private static final int rdthsempty2 = 0, read2_end = 1;
+    public static int rdthsempty2 = 0, read2_end = 1;
 
     /**  newgame_e enum;*/
-    public static final int killthings = 0, toorough = 1, hurtme = 2, violence = 3,
+    public static int killthings = 0, toorough = 1, hurtme = 2, violence = 3,
             nightmare = 4, newg_end = 5;
 
-    private static final String[] gammamsg = {GAMMALVL0,
+    public static String[] gammamsg = {GAMMALVL0,
         GAMMALVL1, GAMMALVL2, GAMMALVL3, GAMMALVL4};
 
     /** sound_e enum */
-    static final int sfx_vol = 0, sfx_empty1 = 1, music_vol = 2, sfx_empty2 = 3,
+    static int sfx_vol = 0, sfx_empty1 = 1, music_vol = 2, sfx_empty2 = 3,
             sound_end = 4;
 
     @Override

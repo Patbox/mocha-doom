@@ -5,7 +5,7 @@ nbproject/private/
 build/
 dist/
 *.wad
-!wads/doom1.wad
+!wads/doomshareware/doom1.wad
 *.dsg
 build.xml
 nbproject/

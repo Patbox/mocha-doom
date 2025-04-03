@@ -155,7 +155,7 @@ but it's no limited to this list. Others are listed in the copyright headers of 
 
 Mocha Doom is distributed under the [GNU GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
-Shareware Doom is distributed under the [Doom WAD Shareware License](wads/doom-wad-shareware-license.txt).
+Shareware Doom is distributed under the [Doom WAD Shareware License](wads/doomshareware/doom-wad-shareware-license.txt).
 
 ## Mocha Doom in action
 

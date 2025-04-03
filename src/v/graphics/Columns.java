@@ -79,6 +79,9 @@ public interface Columns<V, E extends Enum<E>> extends Blocks<V, E> {
      */
     default void DrawPatchColumns(V screen, patch_t patch, int x, int y, int dupx, int dupy, boolean flip) {
         final int scrWidth = getScreenWidth();
+        final int patchWidth = Math.min(patch.width, (scrWidth - x) / dupx);
+        final int patchWidthStart = Math.max(0, -x / dupx);
+
         final IntConsumer task = i -> {
             final int startPoint = point(x + i * dupx, y, scrWidth);
             final column_t column = flip ? patch.columns[patch.width - 1 - i] : patch.columns[i];
@@ -95,11 +98,11 @@ public interface Columns<V, E extends Enum<E>> extends Blocks<V, E> {
          * computing "what to process" instead of "what will be the result"
          */
         if (U.COLUMN_THREADS > 0) try {
-            U.pool.submit(() -> IntStream.range(0, patch.width).parallel().forEach(task)).get();
+            U.pool.submit(() -> IntStream.range(patchWidthStart, patchWidth).parallel().forEach(task)).get();
         } catch (InterruptedException | ExecutionException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         } else {
-            for (int i = 0; i < patch.width; ++i) {
+            for (int i = patchWidthStart; i < patchWidth; ++i) {
                 task.accept(i);
             }
         }

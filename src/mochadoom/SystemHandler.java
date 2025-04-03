@@ -6,12 +6,11 @@ import doom.DoomMain;
 import doom.event_t;
 import s.IMusic;
 import s.ISoundDriver;
+import v.DoomGraphicSystem;
+import v.renderers.RendererFactory;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.OpenOption;
 import java.util.zip.ZipEntry;
@@ -46,6 +45,20 @@ public class SystemHandler {
         default void mainLoopStart() {};
         default void mainLoopEnd() {};
         default void mainLoopPostTic() {};
+
+        default <T, V> DoomGraphicSystem<T,V> createGraphicsSystem(DoomMain<T,V> doomMain) {
+            return RendererFactory.<T, V>newBuilder()
+                    .setVideoScale(doomMain.vs).setBppMode(doomMain.bppMode).setWadLoader(doomMain.wadLoader)
+                    .build();
+        };
+
+        default InputStream getSaveDataInputStream(String name) throws IOException {
+            throw new FileNotFoundException("getSaveDataInputStream not implemented!");
+        };
+
+        default OutputStream getSaveDataOutputStream(String name) throws IOException {
+            throw new IOException("getSaveDataOutputSteam not implemented!");
+        }
     }
 
 }

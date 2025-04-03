@@ -16,6 +16,7 @@
  */
 package utils;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -148,7 +149,10 @@ public class GenericCopy {
 
     @SuppressWarnings("SuspiciousSystemArraycopy")
     public static <T> void memcpy(T srcArray, int srcStart, T dstArray, int dstStart, int length) {
-        System.arraycopy(srcArray, srcStart, dstArray, dstStart, length);
+        var l = Math.min(length, Array.getLength(dstArray) - dstStart);
+        if (l > 0) {
+            System.arraycopy(srcArray, srcStart, dstArray, dstStart, l);
+        }
     }
 
     public static <T> T[] malloc(final ArraySupplier<T> supplier, final IntFunction<T[]> generator, final int length) {

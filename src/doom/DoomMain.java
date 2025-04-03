@@ -90,7 +90,6 @@ import static doom.englsh.GGSAVED;
 import static doom.englsh.SCREENSHOT;
 import static doom.evtype_t.ev_joystick;
 import static doom.evtype_t.ev_keydown;
-import static doom.evtype_t.ev_keyup;
 import static doom.evtype_t.ev_mouse;
 import static doom.gameaction_t.ga_completed;
 import static doom.gameaction_t.ga_failure;
@@ -100,7 +99,6 @@ import static doom.gameaction_t.ga_newgame;
 import static doom.gameaction_t.ga_nothing;
 import static doom.gameaction_t.ga_playdemo;
 import static doom.gameaction_t.ga_savegame;
-import static doom.gameaction_t.ga_screenshot;
 import static doom.gameaction_t.ga_victory;
 import static doom.gameaction_t.ga_worlddone;
 import f.EndLevel;
@@ -108,12 +106,10 @@ import f.Finale;
 import f.Wiper;
 import g.Signals;
 import static g.Signals.ScanCode.SC_CAPSLK;
-import static g.Signals.ScanCode.SC_DOWN;
 import static g.Signals.ScanCode.SC_ESCAPE;
 import static g.Signals.ScanCode.SC_F12;
 import static g.Signals.ScanCode.SC_LALT;
 import static g.Signals.ScanCode.SC_LCTRL;
-import static g.Signals.ScanCode.SC_LEFT;
 import static g.Signals.ScanCode.SC_LSHIFT;
 import static g.Signals.ScanCode.SC_NUMKEY2;
 import static g.Signals.ScanCode.SC_NUMKEY4;
@@ -122,10 +118,9 @@ import static g.Signals.ScanCode.SC_NUMKEY8;
 import static g.Signals.ScanCode.SC_PAUSE;
 import static g.Signals.ScanCode.SC_RALT;
 import static g.Signals.ScanCode.SC_RCTRL;
-import static g.Signals.ScanCode.SC_RIGHT;
 import static g.Signals.ScanCode.SC_RSHIFT;
 import static g.Signals.ScanCode.SC_SEMICOLON;
-import static g.Signals.ScanCode.SC_UP;
+
 import hu.HU;
 import i.DiskDrawer;
 import i.DoomSystem;
@@ -136,14 +131,12 @@ import java.awt.Rectangle;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.locks.LockSupport;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -157,6 +150,8 @@ import static m.fixed_t.MAPFRACUNIT;
 import mochadoom.Engine;
 import mochadoom.Loggers;
 import mochadoom.SystemHandler;
+import mochadoom.tick.GameTick;
+import mochadoom.tick.RemoteTicker;
 import n.DoomSystemNetworking;
 import n.DummyNetworkDriver;
 import p.AbstractLevelLoader;
@@ -189,7 +184,7 @@ import static utils.C2JUtils.memset;
 import v.DoomGraphicSystem;
 import v.renderers.BppMode;
 import static v.renderers.DoomScreen.FG;
-import v.renderers.RendererFactory;
+
 import v.scale.VideoScale;
 import v.scale.VisualSettings;
 import w.IWadLoader;
@@ -229,7 +224,6 @@ import w.WadLoader;
     "StringBufferMayBeStringBuilder"
 })
 public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetworking, IDoomGame, IDoom {
-
     private static final Logger LOGGER = Loggers.getLogger(DoomMain.class.getName());
 
     public static final String RCSID = "$Id: DoomMain.java,v 1.109 2012/11/06 16:04:58 velktron Exp $";
@@ -455,34 +449,31 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         // rendered for this to work. 22/5/2011: Fixed a vexing bug with the wiper.
         // Jesus Christ with a Super Shotgun!
         wiper.EndScreen(0, 0, vs.getScreenWidth(), vs.getScreenHeight());
+        this.ticker.push(new GameTick() {
+            int wipestart = ticker.GetTime() - 1;
+            @Override
+            public void tick() {
+                var nowtime = ticker.GetTime();
+                var tics = nowtime - wipestart;
 
-        wipestart = ticker.GetTime() - 1;
+                while (tics == 0) {
+                    nowtime = ticker.GetTime();
+                    tics = nowtime - wipestart;
+                } // Wait until a single tic has passed.
+                wipestart = nowtime;
+                Wiper.Wipe wipeType = CM.equals(Settings.scale_melt, Boolean.TRUE)
+                        ? Wiper.Wipe.ScaledMelt : Wiper.Wipe.Melt;
 
-        do {
-            //var nanoDelay = ticker.getNanosUntilNextTickCheck(1);
-            nowtime = ticker.GetTime();
-            tics = nowtime - wipestart;
-
-            while (tics == 0) {
-                nowtime = ticker.GetTime();
-                tics = nowtime - wipestart;
-
-                Thread.yield();
-                //if (nanoDelay > 0) {
-                //    Thread.yield();
-                //    LockSupport.parkNanos(SystemHandler.instance, nanoDelay);
-                //}
-            } // Wait until a single tic has passed.
-            wipestart = nowtime;
-            Wiper.Wipe wipeType = CM.equals(Settings.scale_melt, Boolean.TRUE)
-                    ? Wiper.Wipe.ScaledMelt : Wiper.Wipe.Melt;
-
-            done = wiper.ScreenWipe(wipeType, 0, 0, vs.getScreenWidth(), vs.getScreenHeight(), tics);
-            soundDriver.UpdateSound();
-            soundDriver.SubmitSound();             // update sounds after one wipe tic.
-            menu.Drawer();                    // menu is drawn even on top of wipes
-            SystemHandler.instance.updateFrame();             // page flip or blit buffer
-        } while (!done);
+                var done = wiper.ScreenWipe(wipeType, 0, 0, vs.getScreenWidth(), vs.getScreenHeight(), tics);
+                soundDriver.UpdateSound();
+                soundDriver.SubmitSound();             // update sounds after one wipe tic.
+                menu.Drawer();                    // menu is drawn even on top of wipes
+                SystemHandler.instance.updateFrame();             // page flip or blit buffer
+                if (done) {
+                    ticker.pop();
+                }
+            }
+        });
     }
 
     /**
@@ -549,41 +540,24 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             I_StartFrame:
             SystemHandler.instance.mainLoopStart();
             ;
+            this.ticker.tickStart();
 
-            // process one or more tics
-            if (singletics) {
-                I_StartTic:
-                ;
-                D_ProcessEvents:
-                {
-                    ProcessEvents();
+            boolean firstTick = true;
+            if (!this.ticker.hasTick()) {
+                this.defaultTick();
+            }
+            while (this.ticker.hasTick()) {
+                if (firstTick) {
+                    this.ticker.tickStart();
+                    firstTick = false;
                 }
-                G_BuildTiccmd:
-                {
-                    BuildTiccmd(netcmds[consoleplayer][maketic % BACKUPTICS]);
+                this.ticker.tick();
+                if (this.ticker.hasTick()) {
+                    this.ticker.waitForNextTick();
                 }
-                if (advancedemo) {
-                    D_DoAdvanceDemo:
-                    {
-                        DoAdvanceDemo();
-                    }
-                }
-                M_Ticker:
-                {
-                    menu.Ticker();
-                }
-                G_Ticker:
-                {
-                    Ticker();
-                }
-                gametic++;
-                maketic++;
-            } else {
-                gameNetworking.TryRunTics(); // will run at least one tic (in NET)
             }
 
             SystemHandler.instance.mainLoopPostTic();
-
             S_UpdateSounds:
             {
                 doomSound.UpdateSounds(players[consoleplayer].mo); // move positional sounds
@@ -602,6 +576,45 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             soundDriver.SubmitSound();
             //#endif
             SystemHandler.instance.mainLoopEnd();
+
+            if (firstTick) {
+                this.ticker.tickTime();
+            }
+            this.ticker.waitForNextTick();
+        }
+    }
+
+    private void defaultTick() throws IOException {
+        // process one or more tics
+        if (singletics) {
+            I_StartTic:
+            ;
+            D_ProcessEvents:
+            {
+                ProcessEvents();
+            }
+            G_BuildTiccmd:
+            {
+                BuildTiccmd(netcmds[consoleplayer][maketic % BACKUPTICS]);
+            }
+            if (advancedemo) {
+                D_DoAdvanceDemo:
+                {
+                    DoAdvanceDemo();
+                }
+            }
+            M_Ticker:
+            {
+                menu.Ticker();
+            }
+            G_Ticker:
+            {
+                Ticker();
+            }
+            gametic++;
+            maketic++;
+        } else {
+            gameNetworking.TryRunTics(); // will run at least one tic (in NET)
         }
     }
 
@@ -632,7 +645,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         // FIXME: this check wasn't necessary in vanilla, since pagename was
         // guaranteed(?) not to be null or had a safe default value.
         if (pagename != null) {
-            graphicSystem.DrawPatchScaled(FG, wadLoader.CachePatchName(pagename, PU_CACHE), vs, 0, 0, DoomGraphicSystem.V_SAFESCALE);
+            graphicSystem.DrawPatchCenteredScaled(FG, wadLoader.CachePatchName(pagename, PU_CACHE), vs, 0, 0, DoomGraphicSystem.V_SAFESCALE);
         }
     }
 
@@ -763,13 +776,21 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         // First, check for -iwad parameter.
         // If valid, then it trumps all others.
         if (cVarManager.present(CommandVariable.IWAD)) {
+
+
             LOGGER.log(Level.INFO, "-iwad specified. Will be used with priority");
             // It might be quoted.
             final String test = C2JUtils.unquoteIfQuoted(cVarManager.get(CommandVariable.IWAD, String.class, 0).get(), '"');
             final String separator = System.getProperty("file.separator");
             final String iwad = test.substring(1 + test.lastIndexOf(separator));
             doomwaddir = test.substring(0, 1 + test.lastIndexOf(separator));
-            final GameMode attempt = DoomVersion.tryOnlyOne(iwad, doomwaddir);
+            final GameMode attempt;
+            if (cVarManager.present(CommandVariable.VERSION)) {
+                attempt = DoomVersion.fromCvars(cVarManager);
+            } else {
+                attempt = DoomVersion.tryOnlyOne(iwad, doomwaddir);
+            }
+
             // Note: at this point we can't distinguish between "doom" retail
             // and "doom" ultimate yet.
             if (attempt != null) {
@@ -2060,7 +2081,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
             gameaction = ga_nothing;
 
-            DataInputStream f = new DataInputStream(new BufferedInputStream(new FileInputStream(savename)));
+            DataInputStream f = new DataInputStream(new BufferedInputStream(SystemHandler.instance.getSaveDataInputStream(savename)));
 
             header.read(f);
             f.close();
@@ -2075,7 +2096,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             }
 
             // Ok so far, reopen stream.
-            f = new DataInputStream(new BufferedInputStream(new FileInputStream(savename)));
+            f = new DataInputStream(new BufferedInputStream(SystemHandler.instance.getSaveDataInputStream(savename)));
             gameskill = header.getGameskill();
             gameepisode = header.getGameepisode();
             gamemap = header.getGamemap();
@@ -2164,13 +2185,6 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             IDoomSaveGameHeader header = new VanillaDSGHeader();
             IDoomSaveGame dsg = new VanillaDSG<>(this);
 
-            M_CheckParm:
-            {
-                if (cVarManager.bool(CommandVariable.CDROM)) {
-                    build.append("c:\\doomdata\\");
-                }
-            }
-
             build.append(String.format("%s%d.dsg", SAVEGAMENAME, savegameslot));
             name = build.toString();
 
@@ -2186,7 +2200,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             dsg.setHeader(header);
 
             // Try opening a save file. No intermediate buffer (performance?)
-            try ( DataOutputStream f = new DataOutputStream(new FileOutputStream(name))) {
+            try ( DataOutputStream f = new DataOutputStream(SystemHandler.instance.getSaveDataOutputStream(name))) {
                 P_ArchivePlayers:
                 P_ArchiveWorld:
                 P_ArchiveThinkers:
@@ -2639,7 +2653,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
     public final Wiper wiper;
     public final TextureManager<T> textureManager;
     public final ISpriteManager spriteManager;
-    public final ITicker ticker;
+    public final RemoteTicker ticker;
+    public final ITicker timingTicker;
     public final IDiskDrawer diskDrawer;
     public final IDoomSystem doomSystem;
     public final BppMode bppMode;
@@ -2686,8 +2701,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         this.gameNetworking = this; // DoomMain also handles its own Game Networking.
 
         // Set ticker. It is a shared status object, but not a holder itself.
-        this.ticker = ITicker.createTicker(cVarManager);
-
+        this.timingTicker = ITicker.createTicker(cVarManager);
+        this.ticker  = new RemoteTicker(this.timingTicker, cVarManager);
         // Network "driver"
         this.systemNetworking = new DummyNetworkDriver<>(this);
 
@@ -2730,14 +2745,12 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         }
 
         // Video Renderer
-        this.graphicSystem = RendererFactory.<T, V>newBuilder()
-                .setVideoScale(vs).setBppMode(bppMode).setWadLoader(wadLoader)
-                .build();
+        this.graphicSystem = SystemHandler.instance.createGraphicsSystem(this);
 
         LOGGER.log(Level.INFO, "V_Init: Allocate screens.");
 
         // Disk access visualizer
-        this.diskDrawer = new DiskDrawer(this, DiskDrawer.STDISK);
+        this.diskDrawer = cVarManager.present(CommandVariable.HIDEDISKDRAWER) ? IDiskDrawer.NOOP :  new DiskDrawer(this, DiskDrawer.STDISK);
 
         // init subsystems
         LOGGER.log(Level.INFO, "AM_Init: Init Automap colors.");
@@ -2876,13 +2889,14 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
     private void printGameInfo() {
         // Iff additonal PWAD files are used, print modified banner
-        if (modifiedgame) // Generate WAD loading alert. Abort upon denial.
+        // Why would anyone want that?
+        /*if (modifiedgame) // Generate WAD loading alert. Abort upon denial.
         {
             if (!doomSystem.GenerateAlert(Strings.MODIFIED_GAME_TITLE, Strings.MODIFIED_GAME_DIALOG, true)) {
                 wadLoader.CloseAllHandles();
                 SystemHandler.instance.systemExit(-2);
             }
-        }
+        }*/
 
         // Check and print which version is executed.
         switch (getGameMode()) {
@@ -2902,7 +2916,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             case freedoom1:
             case freedoom2:
             case freedm:
-                LOGGER.log(Level.INFO, "Game Info: Copyright (c) 2001-2017 Contributors to the Freedoom project. All rights reserved.");
+                LOGGER.log(Level.INFO, "Game Info: Copyright (c) 2001-2024 Contributors to the Freedoom project. All rights reserved.");
                 LOGGER.log(Level.INFO, "Game Note: See https://github.com/freedoom/freedoom/blob/master/COPYING.adoc");
                 break;
             default:
@@ -3110,10 +3124,6 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
         cVarManager.with(CommandVariable.LOADGAME, 0, (Character c) -> {
             file.delete(0, file.length());
-            if (cVarManager.bool(CommandVariable.CDROM)) {
-                file.append("c:\\doomdata\\");
-            }
-
             file.append(String.format("%s%d.dsg", SAVEGAMENAME, c));
             LoadGame(file.toString());
         });
@@ -3489,6 +3499,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
                 }
             }
+            Thread.yield();
         }
     }
 
@@ -3585,7 +3596,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         int stoptic;
 
         stoptic = ticker.GetTime() + 2;
-       // int nanoDelay = ticker.getNanosUntilNextTickCheck(2);
+        //int nanoDelay = ticker.getNanosUntilNextTickCheck(2);
         while (ticker.GetTime() < stoptic) {
             Thread.yield();
             //LockSupport.parkNanos(SystemHandler.instance, nanoDelay);
@@ -3864,68 +3875,73 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             }
         } // demoplayback
 
-        // wait for new tics if needed
-        while (lowtic < gametic / ticdup + counts) {
-            NetUpdate();
-            lowtic = MAXINT;
+        int finalCounts = counts;
+        int finalLowtic = lowtic;
+        this.ticker.push(new GameTick() {
+            int lowtic = finalLowtic;
+            int counts = finalCounts;
+            @Override
+            public void tick() throws IOException {
+                // wait for new tics if needed
+                if (lowtic < gametic / ticdup + counts) {
+                    NetUpdate();
+                    lowtic = MAXINT;
 
-            // Finds the node with the lowest number of tics.
-            for (i = 0; i < doomcom.numnodes; i++) {
-                if (nodeingame[i] && nettics[i] < lowtic) {
-                    lowtic = nettics[i];
-                }
-            }
-
-            if (lowtic < gametic / ticdup) {
-                doomSystem.Error("TryRunTics: lowtic < gametic");
-            }
-
-            // don't stay in here forever -- give the menu a chance to work
-            int time = ticker.GetTime();
-            if (time / ticdup - entertic >= 20) {
-                menu.Ticker();
-                return;
-            }
-            Thread.yield();
-
-            //var nanoDelay = ticker.getNanosUntilNextTickCheck(1);
-            //if (nanoDelay > 0) {
-            //    Thread.yield();
-            //    LockSupport.parkNanos(SystemHandler.instance, nanoDelay);
-            //}
-        }
-
-        // run the count * ticdup dics
-        while (counts-- > 0) {
-            for (i = 0; i < ticdup; i++) {
-                if (gametic / ticdup > lowtic) {
-                    doomSystem.Error("gametic>lowtic");
-                }
-                if (advancedemo) {
-                    DoAdvanceDemo();
-                }
-                menu.Ticker();
-                Ticker();
-                gametic++;
-
-                // modify command for duplicated tics
-                if (i != ticdup - 1) {
-                    ticcmd_t cmd;
-                    int buf;
-                    int j;
-
-                    buf = (gametic / ticdup) % BACKUPTICS;
-                    for (j = 0; j < MAXPLAYERS; j++) {
-                        cmd = netcmds[j][buf];
-                        cmd.chatchar = 0;
-                        if (flags(cmd.buttons, BT_SPECIAL)) {
-                            cmd.buttons = 0;
+                    // Finds the node with the lowest number of tics.
+                    for (int i = 0; i < doomcom.numnodes; i++) {
+                        if (nodeingame[i] && nettics[i] < lowtic) {
+                            lowtic = nettics[i];
                         }
                     }
+
+                    if (lowtic < gametic / ticdup) {
+                        doomSystem.Error("TryRunTics: lowtic < gametic");
+                    }
+
+                    // don't stay in here forever -- give the menu a chance to work
+                    int time = ticker.GetTime();
+                    if (time / ticdup - entertic >= 20) {
+                        menu.Ticker();
+                        ticker.pop();
+                        return;
+                    }
+                } else {
+                    // run the count * ticdup dics
+                    while (counts-- > 0) {
+                        for (int i = 0; i < ticdup; i++) {
+                            if (gametic / ticdup > lowtic) {
+                                doomSystem.Error("gametic>lowtic");
+                            }
+                            if (advancedemo) {
+                                DoAdvanceDemo();
+                            }
+                            menu.Ticker();
+                            Ticker();
+                            gametic++;
+
+                            // modify command for duplicated tics
+                            if (i != ticdup - 1) {
+                                ticcmd_t cmd;
+                                int buf;
+                                int j;
+
+                                buf = (gametic / ticdup) % BACKUPTICS;
+                                for (j = 0; j < MAXPLAYERS; j++) {
+                                    cmd = netcmds[j][buf];
+                                    cmd.chatchar = 0;
+                                    if (flags(cmd.buttons, BT_SPECIAL)) {
+                                        cmd.buttons = 0;
+                                    }
+                                }
+                            }
+                        }
+                        NetUpdate();   // check for new console commands
+                    }
+
+                    ticker.pop();
                 }
             }
-            NetUpdate();   // check for new console commands
-        }
+        });
     }
 
     @Override

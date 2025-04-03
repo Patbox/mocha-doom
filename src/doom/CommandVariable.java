@@ -35,6 +35,7 @@ public enum CommandVariable {
     MAP('+', MapFormat.class),
     FILE(String[].class),
     IWAD(String.class),
+    VERSION(String.class),
     NOVERT(ForbidFormat.class),
     NOVOLATILEIMAGE(ForbidFormat.class),
     AWTFRAME,
@@ -75,7 +76,9 @@ public enum CommandVariable {
     BLOCKMAP,
     SHOWFPS,
     JAVARANDOM,
-    GREYPAL;
+    GREYPAL,
+
+    TICKERACCURACY(Integer.class), HIDEDISKDRAWER();
 
     public final char prefix;
     public final Class<?>[] arguments;

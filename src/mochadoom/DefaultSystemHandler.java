@@ -16,6 +16,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -390,5 +391,23 @@ public record DefaultSystemHandler() implements SystemHandler.Impl {
     @Override
     public BufferedWriter getFileBufferedWriter(String file, Charset charset, OpenOption[] options) throws IOException {
         return Files.newBufferedWriter(FileSystems.getDefault().getPath(file), charset, options);
+    }
+
+    @Override
+    public InputStream getSaveDataInputStream(String name) throws FileNotFoundException {
+        if (getCvars().bool(CommandVariable.CDROM)) {
+            name = "c:\\doomdata\\" + name;
+        }
+
+        return new FileInputStream(name);
+    }
+
+    @Override
+    public OutputStream getSaveDataOutputStream(String name) throws FileNotFoundException {
+        if (getCvars().bool(CommandVariable.CDROM)) {
+            name = "c:\\doomdata\\" + name;
+        }
+
+        return new FileOutputStream(name);
     }
 }

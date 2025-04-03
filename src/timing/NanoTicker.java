@@ -34,11 +34,6 @@ public class NanoTicker
         return (oldtics = newtics);
     }
 
-    @Override
-    public int getNanosUntilNextTickCheck(int offset) {
-        return 10_000;
-    }
-
     protected volatile long basetime = 0;
     protected volatile int oldtics = 0;
     protected volatile int discrepancies;

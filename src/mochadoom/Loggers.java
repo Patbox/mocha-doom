@@ -48,10 +48,6 @@ import v.graphics.Patches;
  */
 public class Loggers {
 
-    static {
-        System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$-7s] [%3$-20s] %5$s %n");
-    }
-
     private static final Level DEFAULT_LEVEL = Level.WARNING;
 
     private static final Map<Level, Logger> PARENT_LOGGERS_MAP = Stream.of(

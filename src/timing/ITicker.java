@@ -19,7 +19,4 @@ public interface ITicker {
 
     @I_IBM.C(I_GetTime)
     public int GetTime();
-
-
-    int getNanosUntilNextTickCheck(int offset);
 }

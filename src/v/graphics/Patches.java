@@ -115,12 +115,12 @@ public interface Patches<V, E extends Enum<E>> extends Columns<V, E> {
             dupx = dupy = 1;
         }
 
-        try {
-            doRangeCheck(x, y, patch, dupx, dupy);
+        //try {
+            //doRangeCheck(x, y, patch, dupx, dupy);
             DrawPatchColumns(getScreen(screen), patch, x, y, dupx, dupy, flip);
-        } catch (BadRangeException ex) {
-            printDebugPatchInfo(patch, x, y, predevide, scaleOffset, scaleStart, dupx, dupy);
-        }
+        //} catch (BadRangeException ex) {
+        //    printDebugPatchInfo(patch, x, y, predevide, scaleOffset, scaleStart, dupx, dupy);
+        //}
     }
 
     /**
@@ -177,13 +177,13 @@ public interface Patches<V, E extends Enum<E>> extends Columns<V, E> {
             dupx = dupy = 1;
         }
 
-        try {
-            doRangeCheck(x, y, patch, dupx, dupy);
+        //try {
+        //    doRangeCheck(x, y, patch, dupx, dupy);
             DrawPatchColumns(getScreen(screen), patch, x, y, dupx, dupy, flip);
-        } catch (BadRangeException ex) {
+        //} catch (BadRangeException ex) {
             // Do not abort!
-            printDebugPatchInfo(patch, x, y, predevide, scaleOffset, scaleStart, dupx, dupy);
-        }
+        //    printDebugPatchInfo(patch, x, y, predevide, scaleOffset, scaleStart, dupx, dupy);
+        //}
     }
 
     /**
