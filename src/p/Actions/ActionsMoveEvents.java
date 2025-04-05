@@ -57,13 +57,13 @@ public interface ActionsMoveEvents extends ActionTrait {
     /**
      * P_CrossSpecialLine - TRIGGER Called every time a thing origin is about to cross a line with a non 0 special.
      */
-    default void CrossSpecialLine(line_t line, int side, mobj_t thing) {
+    default void CrossSpecialLine(line_t line, int side, mobj_t thing, boolean bossaction) {
         //line_t line;
         boolean ok;
 
         //line = LL.lines[linenum];
         //  Triggers that other things can activate
-        if (thing.player == null) {
+        if (thing.player == null && !bossaction) {
             // Things that should NOT trigger specials...
             switch (thing.type) {
                 case MT_ROCKET:

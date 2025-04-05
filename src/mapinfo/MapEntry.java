@@ -1,6 +1,7 @@
 package mapinfo;
 
-import data.mobjinfo_t;
+import data.mobjtype_t;
+import p.floor_e;
 import doom.MapId;
 import utils.TriState;
 
@@ -32,6 +33,6 @@ public class MapEntry {
     public String intermusic = null;
     public BossAction bossaction = null;
 
-    public record BossActionEntry(mobjinfo_t actor, int linespecial, int tag) {};
+    public record BossActionEntry(mobjtype_t actor, int linespecial, int tag) {};
     public record BossAction(List<BossActionEntry> entries, boolean reset) {};
 }

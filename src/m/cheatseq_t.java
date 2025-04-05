@@ -90,7 +90,7 @@ public class cheatseq_t {
 
     public cheatseq_t(String sequence, boolean prescrambled) {
         if (prescrambled) {
-            this.sequence = sequence.toCharArray();
+            this.sequence = (sequence + (char) 0xFF).toCharArray();
             p = 0;
         } else {
             this.sequence = scrambleString(sequence);

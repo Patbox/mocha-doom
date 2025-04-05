@@ -536,6 +536,8 @@ public class StatusBar extends AbstractStatusBar {
     cheatseq_t cheat_mypos = new cheatseq_t(cheat_mypos_seq, 0);
 
     cheatseq_t cheat_tnthom = new cheatseq_t("tnthom", false);
+    cheatseq_t cheat_nextlvl = new cheatseq_t("pbnextlvl", false);
+    cheatseq_t cheat_nextlvs = new cheatseq_t("pbnextlvs", false);
 
     //
     String[] mapnames;
@@ -876,6 +878,14 @@ public class StatusBar extends AbstractStatusBar {
                 }
             }
 
+            if (ev.ifKeyAsciiChar(cheat_nextlvl::CheckCheat)) {
+                DOOM.ExitLevel();
+            }
+
+            if (ev.ifKeyAsciiChar(cheat_nextlvs::CheckCheat)) {
+                DOOM.SecretExitLevel();
+            }
+
             // 'clev' change-level cheat
             if (ev.ifKeyAsciiChar(cheat_clev::CheckCheat)) {
                 char[] buf = new char[3];
@@ -893,36 +903,15 @@ public class StatusBar extends AbstractStatusBar {
                     map = buf[1] - '0';
                 }
 
-                // Catch invalid maps.
-                if (epsd < 1 && (!DOOM.isCommercial())) {
-                    return false;
-                }
-
                 if (map < 1) {
                     return false;
                 }
 
-                // Ohmygod - this is not going to work.
-                if (DOOM.isRetail()
-                        && ((epsd > 4) || (map > 9))) {
+                if (DOOM.wadLoader.GetNumForName(DOOM.getMapLumpName(epsd, map)) == -1) {
                     return false;
                 }
 
-                // MAES: If it's doom.wad but not ultimate
-                if (DOOM.isRegistered() && !DOOM.isRetail()
-                        && ((epsd > 3) || (map > 9))) {
-                    return false;
-                }
 
-                if (DOOM.isShareware()
-                        && ((epsd > 1) || (map > 9))) {
-                    return false;
-                }
-
-                if (DOOM.isCommercial()
-                        && ((epsd > 1) || (map > 34))) {
-                    return false;
-                }
 
                 // So be it.
                 plyr.message = STSTR_CLEV;

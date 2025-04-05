@@ -64,10 +64,10 @@ public interface ActionsUseEvents extends ActionTrait {
     /**
      * P_UseSpecialLine Called when a thing uses a special line. Only the front sides of lines are usable.
      */
-    default boolean UseSpecialLine(mobj_t thing, line_t line, boolean side) {
+    default boolean UseSpecialLine(mobj_t thing, line_t line, boolean side, boolean bossaction) {
         // Err...
         // Use the back sides of VERY SPECIAL lines...
-        if (side) {
+        if (side && !bossaction) {
             switch (line.special) {
                 case 124:
                     // Sliding door open&close
@@ -82,7 +82,7 @@ public interface ActionsUseEvents extends ActionTrait {
 
         // Switches that other things can activate.
         //_D_: little bug fixed here, see linuxdoom source
-        if (thing.player ==/*!=*/ null) {
+        if (thing.player ==/*!=*/ null && !bossaction) {
             // never open secret doors
             if (eval(line.flags & ML_SECRET)) {
                 return false;
@@ -530,7 +530,7 @@ public interface ActionsUseEvents extends ActionTrait {
         }
 
         //  return false;       // don't use back side
-        UseSpecialLine(sp.usething, line, side);
+        UseSpecialLine(sp.usething, line, side, false);
 
         // can't use for than one special line in a row
         return false;

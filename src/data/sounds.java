@@ -42,8 +42,8 @@ public class sounds {
 //
 // Information about all the music
 //
-    public static musicinfo_t[] S_music
-            = {
+    public static Registry<musicinfo_t> S_music
+            = new Registry<>(m -> String.format("d_%s", m.name).toUpperCase(), new musicinfo_t[] {
                 new musicinfo_t(null),
                 new musicinfo_t("e1m1", 0),
                 new musicinfo_t("e1m2", 0),
@@ -112,7 +112,7 @@ public class sounds {
                 new musicinfo_t("read_m", 0),
                 new musicinfo_t("dm2ttl", 0),
                 new musicinfo_t("dm2int", 0)
-            };
+            });
 
 //
 // Information about all the sfx
@@ -254,6 +254,8 @@ public class sounds {
 
     }
 
+
+    @Deprecated
     public static enum musicenum_t {
         mus_None,
         mus_e1m1,

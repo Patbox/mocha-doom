@@ -11,9 +11,6 @@ thanks to Velktron (Maes) (see [Programming tricks](PROGRAMMING.md) for technica
 Although the port is almost complete and many bugs have been fixed by contributors,
 some work remains to do, most importantly the network code for the multiplayer is missing.
 
-This fork of Mocha Doom is intended to support the classic (vanilla) key controls,
-fix some bugs, and provide some pre-compiled binaries and startup scripts for convenience.
-
 ## Download
 
 You can find the latest distribution package under the [releases](https://github.com/gaborbata/vanilla-mocha-doom/releases/latest) link.

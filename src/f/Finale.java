@@ -31,6 +31,8 @@ import rr.spritedef_t;
 import rr.spriteframe_t;
 import static utils.C2JUtils.eval;
 import static v.DoomGraphicSystem.V_FLIPPEDPATCH;
+
+import utils.TriState;
 import v.graphics.Blocks;
 import v.renderers.DoomScreen;
 import static v.renderers.DoomScreen.FG;
@@ -105,6 +107,7 @@ public class Finale<T> {
             default:
                 break;
         }
+        finaleflat = "FLOOR4_8";
 
         // Okay - IWAD dependend stuff.
         // This has been changed severly, and
@@ -185,28 +188,36 @@ public class Finale<T> {
 
             // Indeterminate.
             default:
-                DOOM.doomSound.ChangeMusic(musicenum_t.mus_read_m, true);
+                //DOOM.doomSound.ChangeMusic(musicenum_t.mus_read_m, true);
                 finaleflat = "F_SKY1"; // Not used anywhere else.
                 finaletext = doom2_text[1];
                 break;
         }
 
+        finalestage = 0;
+        finalecount = 0;
+
         var entry = DOOM.getMapEntry(DOOM.gamemap);
         if (entry != null) {
+            if (entry.nointermission.get(false)) {
+                finalestage = 1;
+            }
+
             if (entry.interbackdrop != null) {
                 finaleflat = entry.interbackdrop;
             }
-            DOOM.doomSound.ChangeMusic(musicenum_t.mus_read_m, true);
+            //DOOM.doomSound.ChangeMusic(musicenum_t.mus_read_m, true);
+
+            //noinspection OptionalAssignedToNull
+            if (entry.intertextsecret != null && DOOM.secretexit) {
+                finaletext = entry.intertextsecret.map(x -> String.join("", x)).orElse("");
+            }
 
             //noinspection OptionalAssignedToNull
             if (entry.intertext != null) {
                 finaletext = entry.intertext.map(x -> String.join("", x)).orElse("");
             }
         }
-
-        finalestage = 0;
-        finalecount = 0;
-
     }
 
     @F_Finale.C(F_Responder)
@@ -222,9 +233,10 @@ public class Finale<T> {
      * F_Ticker
      */
     public void Ticker() {
+        var entry = DOOM.getMapEntry(DOOM.gamemap);
 
         // check for skipping
-        if ((DOOM.isCommercial()) && (finalecount > 50)) {
+        if ((DOOM.isCommercial() || (entry != null && entry.endcast != TriState.DEFAULT)) && (finalecount > 50)) {
             int i;
             // go on to the next level
             for (i = 0; i < MAXPLAYERS; i++) {
@@ -234,7 +246,7 @@ public class Finale<T> {
             }
 
             if (i < MAXPLAYERS) {
-                if (DOOM.gamemap.map() == 30) {
+                if ((entry == null && DOOM.gamemap.map() == 30) || (entry != null && entry.endcast.get(DOOM.gamemap.map() == 30))) {
                     StartCast();
                 } else {
                     DOOM.setGameAction(gameaction_t.ga_worlddone);
@@ -250,7 +262,7 @@ public class Finale<T> {
             return;
         }
 
-        if (DOOM.isCommercial()) {
+        if ((entry != null && !entry.endbunny.get(!DOOM.isCommercial())) || DOOM.isCommercial()) {
             return;
         }
 
@@ -260,7 +272,7 @@ public class Finale<T> {
             finalestage = 1;
             DOOM.wipegamestate = gamestate_t.GS_MINUS_ONE; // force a wipe
 
-            if (DOOM.gamemap.episode() == 3) {
+            if (entry != null && entry.endbunny.get(DOOM.gamemap.episode() == 3)) {
                 DOOM.doomSound.StartMusic(musicenum_t.mus_bunny);
             }
         }
@@ -653,6 +665,8 @@ public class Finale<T> {
     // F_Drawer
     //
     public void Drawer() {
+        var entry = DOOM.getMapEntry(DOOM.gamemap);
+
         if (finalestage == 2) {
             CastDrawer();
             return;
@@ -661,24 +675,32 @@ public class Finale<T> {
         if (finalestage == 0) {
             TextWrite();
         } else {
-            switch (DOOM.gamemap.episode()) {
-                case 1:
-                    if (DOOM.isCommercial() || DOOM.isRegistered()) {
-                        DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName("CREDIT", PU_CACHE), this.DOOM.vs, 0, 0);
-                    } else // Fun fact: Registered/Ultimate Doom has no "HELP2" lump.
-                    {
-                        DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName("HELP2", PU_CACHE), this.DOOM.vs, 0, 0);
-                    }
-                    break;
-                case 2:
-                    DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName("VICTORY2", PU_CACHE), this.DOOM.vs, 0, 0);
-                    break;
-                case 3:
-                    BunnyScroll();
-                    break;
-                case 4:
-                    DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName("ENDPIC", PU_CACHE), this.DOOM.vs, 0, 0);
-                    break;
+            if (entry != null && entry.endpic != null) {
+                DOOM.graphicSystem.DrawPatchCenteredScaled(FG, DOOM.wadLoader.CachePatchName(entry.endpic, PU_CACHE), this.DOOM.vs, 0, 0);
+            } else if (entry != null && entry.endbunny == TriState.TRUE) {
+                BunnyScroll();
+            } else {
+                switch (DOOM.gamemap.episode()) {
+                    case 1:
+                        if (DOOM.isCommercial() || DOOM.isRegistered()) {
+                            DOOM.graphicSystem.DrawPatchCenteredScaled(FG, DOOM.wadLoader.CachePatchName("CREDIT", PU_CACHE), this.DOOM.vs, 0, 0);
+                        } else // Fun fact: Registered/Ultimate Doom has no "HELP2" lump.
+                        {
+                            DOOM.graphicSystem.DrawPatchCenteredScaled(FG, DOOM.wadLoader.CachePatchName("HELP2", PU_CACHE), this.DOOM.vs, 0, 0);
+                        }
+                        break;
+                    case 2:
+                        DOOM.graphicSystem.DrawPatchCenteredScaled(FG, DOOM.wadLoader.CachePatchName("VICTORY2", PU_CACHE), this.DOOM.vs, 0, 0);
+                        break;
+                    case 3:
+                        if (entry == null || entry.endbunny == TriState.DEFAULT) {
+                            BunnyScroll();
+                            break;
+                        }
+                    case 4:
+                        DOOM.graphicSystem.DrawPatchCenteredScaled(FG, DOOM.wadLoader.CachePatchName("ENDPIC", PU_CACHE), this.DOOM.vs, 0, 0);
+                        break;
+                }
             }
         }
 

@@ -138,12 +138,15 @@ public class AbstractDoomAudio implements IDoomSound {
 
         // start new music for the level
         mus_paused = false;
-
-        if (DS.isCommercial()) {
-            mnum = musicenum_t.mus_runnin.ordinal() + DS.gamemap.map() - 1;
+        var entry = DS.getMapEntry(DS.gamemap);
+        if (entry != null && entry.music != null) {
+            mnum = sounds.S_music.getIdByName(entry.music.toUpperCase());
         } else {
-            musicenum_t[] spmus
-                    = {
+            if (DS.isCommercial()) {
+                mnum = musicenum_t.mus_runnin.ordinal() + DS.gamemap.map() - 1;
+            } else {
+                musicenum_t[] spmus
+                        = {
                         // Song - Who? - Where?
 
                         musicenum_t.mus_e3m4, // American	e4m1
@@ -155,12 +158,13 @@ public class AbstractDoomAudio implements IDoomSound {
                         musicenum_t.mus_e2m6, // J.Anderson	e4m7 CHIRON.WAD
                         musicenum_t.mus_e2m5, // Shawn	e4m8
                         musicenum_t.mus_e1m9 // Tim		e4m9
-                    };
+                };
 
-            if (DS.gamemap.episode() < 4) {
-                mnum = musicenum_t.mus_e1m1.ordinal() + (DS.gamemap.episode() - 1) * 9 + DS.gamemap.map() - 1;
-            } else {
-                mnum = spmus[DS.gamemap.map() - 1].ordinal();
+                if (DS.gamemap.episode() < 4) {
+                    mnum = musicenum_t.mus_e1m1.ordinal() + (DS.gamemap.episode() - 1) * 9 + DS.gamemap.map() - 1;
+                } else {
+                    mnum = spmus[DS.gamemap.map() - 1].ordinal();
+                }
             }
         }
 
@@ -559,15 +563,13 @@ public class AbstractDoomAudio implements IDoomSound {
         musicinfo_t music = null;
         String namebuf;
 
-        if ((musicnum <= musicenum_t.mus_None.ordinal())
-                || (musicnum >= musicenum_t.NUMMUSIC.ordinal())) {
-
+        if (!sounds.S_music.constainsId(musicnum)) {
             DS.doomSystem.Error("Bad music number %d", musicnum);
         } else {
-            music = sounds.S_music[musicnum];
+            music = sounds.S_music.get(musicnum);
         }
 
-        if (mus_playing == music) {
+        if (mus_playing == music || music == null) {
             return;
         }
 
@@ -576,7 +578,7 @@ public class AbstractDoomAudio implements IDoomSound {
 
         // get lumpnum if neccessary
         if (music.lumpnum == 0) {
-            namebuf = String.format("d_%s", music.name);
+            namebuf = sounds.S_music.getName(music);
             music.lumpnum = DS.wadLoader.GetNumForName(namebuf);
         }
 

@@ -21,6 +21,7 @@ import static data.Limits.MAXPLAYERS;
 import data.mobjtype_t;
 import doom.DoomMain;
 import doom.thinker_t;
+import mapinfo.MapEntry;
 import p.Actions.ActionTrait;
 import p.ActiveStates;
 import p.floor_e;
@@ -48,72 +49,71 @@ public interface Bosses extends ActionTrait {
         line_t junk = new line_t();
         int i;
 
-        if (D.isCommercial()) {
-            if (D.gamemap.map() != 7) {
-                return;
+        var entry = D.getMapEntry(D.gamemap);
+
+        MapEntry.BossActionEntry action = null;
+
+        if (entry != null && entry.bossaction != null) {
+            for (var check : entry.bossaction.entries()) {
+                if (mo.type == check.actor()) {
+                    action = check;
+                    break;
+                }
             }
+        }
 
-            if ((mo.type != mobjtype_t.MT_FATSO)
-                    && (mo.type != mobjtype_t.MT_BABY)) {
-                return;
-            }
-        } else {
-            switch (D.gamemap.episode()) {
-                case 1:
-                    if (D.gamemap.map() != 8) {
-                        return;
+        if (action == null && (entry == null || entry.bossaction == null || !entry.bossaction.reset())) {
+            if (D.isCommercial()) {
+                if (D.gamemap.map() == 7) {
+                    if (mo.type == mobjtype_t.MT_FATSO) {
+                        action = new MapEntry.BossActionEntry(mo.type, 23, 666);
+                    } else if (mo.type == mobjtype_t.MT_BABY) {
+                        action = new MapEntry.BossActionEntry(mo.type, 30, 666);
                     }
+                }
+            } else {
+                switch (D.gamemap.episode()) {
+                    case 1:
+                        if (D.gamemap.map() == 8 && mo.type == mobjtype_t.MT_BRUISER) {
+                            action = new MapEntry.BossActionEntry(mo.type, 23, 666);
+                        }
+                        break;
 
-                    if (mo.type != mobjtype_t.MT_BRUISER) {
-                        return;
-                    }
-                    break;
+                    case 2:
+                        if (D.gamemap.map() == 8 && mo.type == mobjtype_t.MT_CYBORG) {
+                            action = new MapEntry.BossActionEntry(mo.type, 11, 666);
+                        }
+                        break;
 
-                case 2:
-                    if (D.gamemap.map() != 8) {
-                        return;
-                    }
+                    case 3:
+                        if (D.gamemap.map() == 8 && mo.type == mobjtype_t.MT_SPIDER) {
+                            action = new MapEntry.BossActionEntry(mo.type, 11, 666);
+                        }
 
-                    if (mo.type != mobjtype_t.MT_CYBORG) {
-                        return;
-                    }
-                    break;
+                        break;
 
-                case 3:
-                    if (D.gamemap.map() != 8) {
-                        return;
-                    }
+                    case 4:
+                        switch (D.gamemap.map()) {
+                            case 6:
+                                if (mo.type == mobjtype_t.MT_CYBORG) {
+                                    action = new MapEntry.BossActionEntry(mo.type, 109, 666);
+                                }
+                                break;
 
-                    if (mo.type != mobjtype_t.MT_SPIDER) {
-                        return;
-                    }
+                            case 8:
+                                if (mo.type != mobjtype_t.MT_SPIDER) {
+                                    action = new MapEntry.BossActionEntry(mo.type, 23, 666);
+                                }
+                                break;
+                        }
+                        break;
 
-                    break;
-
-                case 4:
-                    switch (D.gamemap.map()) {
-                        case 6:
-                            if (mo.type != mobjtype_t.MT_CYBORG) {
-                                return;
-                            }
-                            break;
-
-                        case 8:
-                            if (mo.type != mobjtype_t.MT_SPIDER) {
-                                return;
-                            }
-                            break;
-
-                        default:
+                    default:
+                        if (D.gamemap.map() != 8) {
                             return;
-                    }
-                    break;
-
-                default:
-                    if (D.gamemap.map() != 8) {
-                        return;
-                    }
-                    break;
+                        }
+                        break;
+                }
             }
         }
 
@@ -143,44 +143,13 @@ public interface Bosses extends ActionTrait {
             }
         }
 
-        // victory!
-        if (D.isCommercial()) {
-            if (D.gamemap.map() == 7) {
-                if (mo.type == mobjtype_t.MT_FATSO) {
-                    junk.tag = 666;
-                    getThinkers().DoFloor(junk, floor_e.lowerFloorToLowest);
-                    return;
-                }
-
-                if (mo.type == mobjtype_t.MT_BABY) {
-                    junk.tag = 667;
-                    getThinkers().DoFloor(junk, floor_e.raiseToTexture);
-                    return;
-                }
-            }
-        } else {
-            switch (D.gamemap.episode()) {
-                case 1:
-                    junk.tag = 666;
-                    getThinkers().DoFloor(junk, floor_e.lowerFloorToLowest);
-                    return;
-
-                case 4:
-                    switch (D.gamemap.map()) {
-                        case 6:
-                            junk.tag = 666;
-                            getThinkers().DoDoor(junk, vldoor_e.blazeOpen);
-                            return;
-
-                        case 8:
-                            junk.tag = 666;
-                            getThinkers().DoFloor(junk, floor_e.lowerFloorToLowest);
-                            return;
-                    }
+        if (action != null) {
+            junk.special = (short) action.linespecial();
+            junk.tag = (short) action.tag();
+            if (!getThinkers().UseSpecialLine(mo, junk, false, true)) {
+                getThinkers().CrossSpecialLine(junk,0, mo, true);
             }
         }
-
-        D.ExitLevel();
     }
 
     default void A_KeenDie(mobj_t mo) {

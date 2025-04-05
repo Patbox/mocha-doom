@@ -28,18 +28,18 @@ import static data.Limits.MAXEVENTS;
 import static data.Limits.MAXINT;
 import static data.Limits.MAXNETNODES;
 import static data.Limits.MAXPLAYERS;
-import data.Tables;
+
+import data.*;
+
 import static data.Tables.ANG45;
 import static data.Tables.ANGLETOFINESHIFT;
 import static data.Tables.finecosine;
 import static data.Tables.finesine;
-import data.dstrings;
 import static data.dstrings.DEVMAPS;
 import static data.dstrings.SAVEGAMENAME;
 import static data.info.mobjinfo;
 import static data.info.states;
-import data.mapthing_t;
-import data.mobjtype_t;
+
 import data.sounds.musicenum_t;
 import data.sounds.sfxenum_t;
 import defines.DoomVersion;
@@ -1902,7 +1902,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
     //
     // G_DoCompleted
     //
-    boolean secretexit;
+    public boolean secretexit;
 
     public final void ExitLevel() {
         secretexit = false;
@@ -2804,6 +2804,12 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         var umapInfo = wadLoader.CheckNumForName("UMAPINFO");
         if (umapInfo != -1) {
             this.mapInfo = wadLoader.CacheLumpNum(umapInfo, 0, UMAPINFO.class);
+
+            for (var map : this.mapInfo.maps().values()) {
+                if (map.music != null && !sounds.S_music.containsName(map.music.toUpperCase())) {
+                    sounds.S_music.add(map.music.toUpperCase(), new musicinfo_t(map.music));
+                }
+            }
         }
 
         // Video Renderer

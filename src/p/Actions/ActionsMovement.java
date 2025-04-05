@@ -141,7 +141,7 @@ public interface ActionsMovement extends ActionsPathTraverse {
                 // if the special is not a door
                 // that can be opened,
                 // return false
-                if (UseSpecialLine(actor, ld, false)) {
+                if (UseSpecialLine(actor, ld, false, false)) {
                     good = true;
                 }
             }
@@ -215,7 +215,7 @@ public interface ActionsMovement extends ActionsPathTraverse {
                 oldside = ld.PointOnLineSide(oldx, oldy);
                 if (side != oldside) {
                     if (ld.special != 0) {
-                        CrossSpecialLine(ld, oldside ? 1 : 0, thing);
+                        CrossSpecialLine(ld, oldside ? 1 : 0, thing, false);
                     }
                 }
             }

@@ -574,7 +574,7 @@ public class WadLoader implements IWadLoader {
     public int GetNumForName(String name) {
         int i;
 
-        i = CheckNumForName(name.toUpperCase());
+        i = CheckNumForName(name);
 
         if (i == -1) {
             I.Error("W_GetNumForName: %s not found! hash: %s", name, Long.toHexString(name8.getLongHash(name)));
@@ -953,7 +953,7 @@ public class WadLoader implements IWadLoader {
     @SourceCode.Compatible
     @W_Wad.C(W_CheckNumForName)
     public int CheckNumForName(String name/* , int namespace */) {
-        final Integer r = doomhash.get(name);
+        final Integer r = doomhash.get(name.toUpperCase());
         if (r != null) {
             return r;
         }

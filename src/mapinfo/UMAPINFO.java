@@ -1,6 +1,7 @@
 package mapinfo;
 
 import doom.MapId;
+import p.floor_e;
 import utils.StringParser;
 import utils.TriState;
 import w.CacheableDoomObject;

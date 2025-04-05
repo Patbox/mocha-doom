@@ -1,6 +1,7 @@
 package s;
 
 import data.sfxinfo_t;
+import data.sounds;
 import data.sounds.musicenum_t;
 import data.sounds.sfxenum_t;
 import doom.CVarManager;

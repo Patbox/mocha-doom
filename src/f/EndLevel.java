@@ -328,8 +328,6 @@ public class EndLevel<T, V> extends AbstractEndLevel {
      */
     patch_t[] lnames;
 
-    List<patch_t> loadedPatches = new ArrayList<>();
-
     //
     // CODE
     //
@@ -348,7 +346,32 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         //this.Start(DS.wminfo);
     }
 
-    protected void slamBackground() {
+    protected void slamBackground(boolean isNext) {
+        var entryLast = DOOM.getMapEntry(wbs.lastMap);
+        var entryNext = DOOM.getMapEntry(wbs.nextMap);
+        String name;
+        anim_t a;
+
+        if (entryNext != null && entryNext.enterPic != null && isNext) {
+            name = entryNext.exitPic;
+        } else if (entryLast != null && entryLast.exitPic != null) {
+            name = entryLast.exitPic;
+        } else {
+            if (DOOM.isCommercial()) {
+                name = "INTERPIC";
+            } else if (wbs.lastMap.episode() < 4) { //sprintf(name, "WIMAP%d", wbs.lastMap.episode() - 1);
+                name = ("WIMAP" + Integer.toString(wbs.lastMap.episode() - 1));
+            } else {
+                name = "INTERPIC";
+            }
+        }
+
+        if (!bg.name.equalsIgnoreCase(name)) {
+            DOOM.wadLoader.UnlockLumpNum(bg);
+            bg = DOOM.wadLoader.CacheLumpName(name, PU_CACHE, patch_t.class);
+            DOOM.graphicSystem.DrawPatchCenteredScaled(BG, bg, DOOM.vs, 0, 0, V_SAFESCALE);
+        }
+
         //    memcpy(screens[0], screens[1], DOOM.vs.getScreenWidth() * DOOM.vs.getScreenHeight());
         // Remember, the second arg is the source!
         DOOM.graphicSystem.screenCopy(BG, FG);
@@ -833,7 +856,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         int i;
         int last;
 
-        slamBackground();
+        slamBackground(true);
 
         // draw animated background
         drawAnimatedBack();
@@ -1027,7 +1050,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
 
         int lh = WI_SPACINGY; // line height
 
-        slamBackground();
+        slamBackground(false);
 
         // draw animated background
         drawAnimatedBack();
@@ -1264,7 +1287,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         int y;
         int pwidth = percent.width;
 
-        slamBackground();
+        slamBackground(false);
 
         // draw animated background
         drawAnimatedBack();
@@ -1429,7 +1452,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
 
         lh = (3 * num[0].height * DOOM.vs.getScalingY()) / 2;
 
-        slamBackground();
+        slamBackground(false);
 
         // draw animated background
         drawAnimatedBack();
