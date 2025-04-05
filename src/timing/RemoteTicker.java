@@ -1,8 +1,7 @@
-package mochadoom.tick;
+package timing;
 
 import doom.CVarManager;
 import doom.CommandVariable;
-import timing.ITicker;
 
 import java.io.IOException;
 import java.util.concurrent.locks.LockSupport;

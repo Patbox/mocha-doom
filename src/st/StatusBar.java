@@ -36,8 +36,7 @@ import static data.Tables.ANG180;
 import static data.Tables.ANG45;
 import data.sounds.musicenum_t;
 import defines.ammotype_t;
-import doom.DoomMain;
-import doom.SourceCode;
+import doom.*;
 import doom.SourceCode.CauseOfDesyncProbability;
 import doom.SourceCode.ST_Stuff;
 import static doom.SourceCode.ST_Stuff.ST_Responder;
@@ -53,13 +52,10 @@ import static doom.englsh.STSTR_MUS;
 import static doom.englsh.STSTR_NCOFF;
 import static doom.englsh.STSTR_NCON;
 import static doom.englsh.STSTR_NOMUS;
-import doom.event_t;
-import doom.evtype_t;
 import static doom.items.weaponinfo;
-import doom.player_t;
 import static doom.player_t.CF_GODMODE;
 import static doom.player_t.CF_NOCLIP;
-import doom.weapontype_t;
+
 import g.Signals;
 import java.awt.Rectangle;
 import m.Settings;
@@ -930,7 +926,7 @@ public class StatusBar extends AbstractStatusBar {
 
                 // So be it.
                 plyr.message = STSTR_CLEV;
-                DOOM.DeferedInitNew(DOOM.gameskill, epsd, map);
+                DOOM.DeferedInitNew(DOOM.gameskill, new MapId(DOOM.getMapLumpName(epsd, map), epsd, map));
             }
         }
         return false;

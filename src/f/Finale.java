@@ -118,7 +118,7 @@ public class Finale<T> {
             case retail: {
                 DOOM.doomSound.ChangeMusic(musicenum_t.mus_victor, true);
 
-                switch (DOOM.gameepisode) {
+                switch (DOOM.gamemap.episode()) {
                     case 1:
                         finaleflat = "FLOOR4_8";
                         finaletext = texts[0];
@@ -151,7 +151,7 @@ public class Finale<T> {
             case pack_plut: {
                 DOOM.doomSound.ChangeMusic(musicenum_t.mus_read_m, true);
 
-                switch (DOOM.gamemap) {
+                switch (DOOM.gamemap.map()) {
                     case 6:
                         finaleflat = "SLIME16";
                         finaletext = texts[0];
@@ -191,6 +191,19 @@ public class Finale<T> {
                 break;
         }
 
+        var entry = DOOM.getMapEntry(DOOM.gamemap);
+        if (entry != null) {
+            if (entry.interbackdrop != null) {
+                finaleflat = entry.interbackdrop;
+            }
+            DOOM.doomSound.ChangeMusic(musicenum_t.mus_read_m, true);
+
+            //noinspection OptionalAssignedToNull
+            if (entry.intertext != null) {
+                finaletext = entry.intertext.map(x -> String.join("", x)).orElse("");
+            }
+        }
+
         finalestage = 0;
         finalecount = 0;
 
@@ -221,7 +234,7 @@ public class Finale<T> {
             }
 
             if (i < MAXPLAYERS) {
-                if (DOOM.gamemap == 30) {
+                if (DOOM.gamemap.map() == 30) {
                     StartCast();
                 } else {
                     DOOM.setGameAction(gameaction_t.ga_worlddone);
@@ -247,7 +260,7 @@ public class Finale<T> {
             finalestage = 1;
             DOOM.wipegamestate = gamestate_t.GS_MINUS_ONE; // force a wipe
 
-            if (DOOM.gameepisode == 3) {
+            if (DOOM.gamemap.episode() == 3) {
                 DOOM.doomSound.StartMusic(musicenum_t.mus_bunny);
             }
         }
@@ -648,7 +661,7 @@ public class Finale<T> {
         if (finalestage == 0) {
             TextWrite();
         } else {
-            switch (DOOM.gameepisode) {
+            switch (DOOM.gamemap.episode()) {
                 case 1:
                     if (DOOM.isCommercial() || DOOM.isRegistered()) {
                         DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName("CREDIT", PU_CACHE), this.DOOM.vs, 0, 0);

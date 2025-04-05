@@ -49,7 +49,7 @@ public interface Bosses extends ActionTrait {
         int i;
 
         if (D.isCommercial()) {
-            if (D.gamemap != 7) {
+            if (D.gamemap.map() != 7) {
                 return;
             }
 
@@ -58,9 +58,9 @@ public interface Bosses extends ActionTrait {
                 return;
             }
         } else {
-            switch (D.gameepisode) {
+            switch (D.gamemap.episode()) {
                 case 1:
-                    if (D.gamemap != 8) {
+                    if (D.gamemap.map() != 8) {
                         return;
                     }
 
@@ -70,7 +70,7 @@ public interface Bosses extends ActionTrait {
                     break;
 
                 case 2:
-                    if (D.gamemap != 8) {
+                    if (D.gamemap.map() != 8) {
                         return;
                     }
 
@@ -80,7 +80,7 @@ public interface Bosses extends ActionTrait {
                     break;
 
                 case 3:
-                    if (D.gamemap != 8) {
+                    if (D.gamemap.map() != 8) {
                         return;
                     }
 
@@ -91,7 +91,7 @@ public interface Bosses extends ActionTrait {
                     break;
 
                 case 4:
-                    switch (D.gamemap) {
+                    switch (D.gamemap.map()) {
                         case 6:
                             if (mo.type != mobjtype_t.MT_CYBORG) {
                                 return;
@@ -110,12 +110,11 @@ public interface Bosses extends ActionTrait {
                     break;
 
                 default:
-                    if (D.gamemap != 8) {
+                    if (D.gamemap.map() != 8) {
                         return;
                     }
                     break;
             }
-
         }
 
         // make sure there is a player alive for victory
@@ -146,7 +145,7 @@ public interface Bosses extends ActionTrait {
 
         // victory!
         if (D.isCommercial()) {
-            if (D.gamemap == 7) {
+            if (D.gamemap.map() == 7) {
                 if (mo.type == mobjtype_t.MT_FATSO) {
                     junk.tag = 666;
                     getThinkers().DoFloor(junk, floor_e.lowerFloorToLowest);
@@ -160,14 +159,14 @@ public interface Bosses extends ActionTrait {
                 }
             }
         } else {
-            switch (D.gameepisode) {
+            switch (D.gamemap.episode()) {
                 case 1:
                     junk.tag = 666;
                     getThinkers().DoFloor(junk, floor_e.lowerFloorToLowest);
                     return;
 
                 case 4:
-                    switch (D.gamemap) {
+                    switch (D.gamemap.map()) {
                         case 6:
                             junk.tag = 666;
                             getThinkers().DoDoor(junk, vldoor_e.blazeOpen);

@@ -8,16 +8,15 @@ import static data.dstrings.NUM_QUITMESSAGES;
 import static data.dstrings.SAVEGAMENAME;
 import static data.dstrings.endmsg;
 import data.sounds.sfxenum_t;
+import defines.GameMode;
 import defines.Language_t;
 import defines.gamestate_t;
 import defines.skill_t;
-import doom.DoomMain;
-import doom.SourceCode;
+import doom.*;
 import doom.SourceCode.M_Menu;
 import static doom.SourceCode.M_Menu.M_Responder;
 import static doom.SourceCode.M_Menu.M_StartControlPanel;
 import static doom.SourceCode.M_Menu.M_Ticker;
-import doom.englsh;
 import static doom.englsh.DOSY;
 import static doom.englsh.EMPTYSTRING;
 import static doom.englsh.ENDGAME;
@@ -38,13 +37,13 @@ import static doom.englsh.QSAVESPOT;
 import static doom.englsh.QSPROMPT;
 import static doom.englsh.SAVEDEAD;
 import static doom.englsh.SWSTRING;
-import doom.event_t;
-import doom.evtype_t;
+
 import g.Signals.ScanCode;
 import static g.Signals.ScanCode.*;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
@@ -255,15 +254,30 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
         //
         // EPISODE SELECT
         //
-        EpisodeMenu = new menuitem_t[]{
-            new menuitem_t(1, "M_EPI1", Episode, SC_K),
-            new menuitem_t(1, "M_EPI2", Episode, SC_T),
-            new menuitem_t(1, "M_EPI3", Episode, SC_I),
-            new menuitem_t(1, "M_EPI4", Episode, SC_T)
-        };
+
+        var episodes = new ArrayList<menuitem_t>();
+        episodes.add(new menuitem_t(1, "M_EPI1", Episode, SC_K));
+        episodes.add(new menuitem_t(1, "M_EPI2", Episode, SC_T));
+        episodes.add(new menuitem_t(1, "M_EPI3", Episode, SC_I));
+        if (DOOM.getGameMode() != GameMode.shareware && DOOM.getGameMode() != GameMode.registered) {
+            episodes.add(new menuitem_t(1, "M_EPI4", Episode, SC_T));
+        }
+
+        if (DOOM.mapInfo != null) {
+            for (var episode : DOOM.mapInfo.episodes()) {
+                if (episode.clearPrevious) {
+                    episodes.clear();
+                }
+                var entry = new menuitem_t(1, episode.texture, new M_EpisodeCustom(episode.map));
+                entry.fallbackName = episode.name;
+                episodes.add(entry);
+            }
+        }
+
+        EpisodeMenu = episodes.toArray(menuitem_t[]::new);
 
         EpiDef = new menu_t(
-                ep_end, // # of menu items
+                EpisodeMenu.length, // # of menu items
                 MainDef, // previous menu
                 EpisodeMenu, // menuitem_t ->
                 DrawEpisode, // drawing routine ->
@@ -640,7 +654,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     //
     // M_Episode
     //
-    public int epi;
+    public MapId mapId = new MapId("MAP01", 1, 1);
 
     class M_VerifyNightmare implements MenuRoutine {
 
@@ -650,7 +664,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
                 return;
             }
 
-            DOOM.DeferedInitNew(skill_t.sk_nightmare, epi + 1, 1);
+            DOOM.DeferedInitNew(skill_t.sk_nightmare, mapId);
             ClearMenus();
         }
     }
@@ -1438,7 +1452,6 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
             // branching to an ad screen.
             // We need to remove the fourth episode.
             case registered:
-                EpiDef.numitems--;
                 break;
             case freedoom1:
             case retail:
@@ -1713,7 +1726,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
                 return;
             }
 
-            DOOM.DeferedInitNew(skill_t.values()[choice], epi + 1, 1);
+            DOOM.DeferedInitNew(skill_t.values()[choice], mapId);
             ClearMenus();
         }
 
@@ -1756,10 +1769,8 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
     }
 
     class M_Episode implements MenuRoutine {
-
         @Override
         public void invoke(int choice) {
-
             if (DOOM.isShareware() && (choice != 0)) {
                 StartMessage(SWSTRING, null, false);
                 SetupNextMenu(ReadDef2);
@@ -1772,10 +1783,23 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
                 choice = 0;
             }
 
-            epi = choice;
+            mapId = new MapId(DOOM.getMapLumpName(choice + 1, 1),choice + 1, 1);
             SetupNextMenu(NewDef);
         }
+    }
 
+    class M_EpisodeCustom implements MenuRoutine {
+        MapId map;
+        public M_EpisodeCustom(MapId mapId) {
+            this.map = mapId;
+        }
+
+        @Override
+        public void invoke(int choice) {
+            mapId = map;
+
+            SetupNextMenu(NewDef);
+        }
     }
 
     /**

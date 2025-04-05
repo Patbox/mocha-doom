@@ -14,14 +14,12 @@ public class wbstartstruct_t implements Cloneable {
         plyr = malloc(wbplayerstruct_t::new, wbplayerstruct_t[]::new, MAXPLAYERS);
     }
 
-    public int epsd;   // episode # (0-2)
-
     // if true, splash the secret level
     public boolean didsecret;
 
     // previous and next levels, origin 0
-    public int last;
-    public int next;
+    public MapId lastMap;
+    public MapId nextMap;
 
     public int maxkills;
     public int maxitems;

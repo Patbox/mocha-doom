@@ -5,11 +5,14 @@ import static data.Limits.MAXPLAYERS;
 import static data.Limits.SAVESTRINGSIZE;
 import static data.Limits.VERSIONSIZE;
 import defines.skill_t;
+import doom.DoomMain;
 import doom.DoomStatus;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import doom.MapId;
 import utils.C2JUtils;
 import w.CacheableDoomObject;
 import w.DoomBuffer;
@@ -149,8 +152,7 @@ public class DoomSaveGame implements CacheableDoomObject, IReadableDoomObject, I
     public void toStat(DoomStatus<?, ?> DS) {
         System.arraycopy(this.playeringame, 0, DS.playeringame, 0, this.playeringame.length);
         DS.gameskill = skill_t.values()[this.gameskill];
-        DS.gameepisode = this.gameepisode;
-        DS.gamemap = this.gamemap;
+        DS.gamemap = new MapId(((DoomMain) DS).getMapLumpName(gameepisode, gamemap), gameepisode, gamemap);
         DS.leveltime = this.leveltime;
 
     }
@@ -158,8 +160,8 @@ public class DoomSaveGame implements CacheableDoomObject, IReadableDoomObject, I
     public void fromStat(DoomStatus<?, ?> DS) {
         System.arraycopy(DS.playeringame, 0, this.playeringame, 0, DS.playeringame.length);
         this.gameskill = DS.gameskill.ordinal();
-        this.gameepisode = DS.gameepisode;
-        this.gamemap = DS.gamemap;
+        this.gameepisode = DS.gamemap.episode();
+        this.gamemap = DS.gamemap.map();
         this.leveltime = DS.leveltime;
 
     }

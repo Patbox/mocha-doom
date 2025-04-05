@@ -31,6 +31,8 @@ public class menuitem_t {
     // void	(*routine)(int choice);
     public MenuRoutine routine;
 
+    public String fallbackName = null;
+
     /**
      * hotkey in menu
      */

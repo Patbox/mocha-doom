@@ -140,7 +140,7 @@ public class AbstractDoomAudio implements IDoomSound {
         mus_paused = false;
 
         if (DS.isCommercial()) {
-            mnum = musicenum_t.mus_runnin.ordinal() + DS.gamemap - 1;
+            mnum = musicenum_t.mus_runnin.ordinal() + DS.gamemap.map() - 1;
         } else {
             musicenum_t[] spmus
                     = {
@@ -157,10 +157,10 @@ public class AbstractDoomAudio implements IDoomSound {
                         musicenum_t.mus_e1m9 // Tim		e4m9
                     };
 
-            if (DS.gameepisode < 4) {
-                mnum = musicenum_t.mus_e1m1.ordinal() + (DS.gameepisode - 1) * 9 + DS.gamemap - 1;
+            if (DS.gamemap.episode() < 4) {
+                mnum = musicenum_t.mus_e1m1.ordinal() + (DS.gamemap.episode() - 1) * 9 + DS.gamemap.map() - 1;
             } else {
-                mnum = spmus[DS.gamemap - 1].ordinal();
+                mnum = spmus[DS.gamemap.map() - 1].ordinal();
             }
         }
 
@@ -668,7 +668,7 @@ public class AbstractDoomAudio implements IDoomSound {
         // From _GG1_ p.428. Appox. eucledian distance fast.
         approx_dist = adx + ady - ((adx < ady ? adx : ady) >> 1);
 
-        if (DS.gamemap != 8
+        if (DS.gamemap.map() != 8
                 && approx_dist > S_CLIPPING_DIST) {
             return false;
         }
@@ -694,7 +694,7 @@ public class AbstractDoomAudio implements IDoomSound {
         // volume calculation
         if (approx_dist < S_CLOSE_DIST) {
             vps.volume = snd_SfxVolume;
-        } else if (DS.gamemap == 8) {
+        } else if (DS.gamemap.map() == 8) {
             if (approx_dist > S_CLIPPING_DIST) {
                 approx_dist = S_CLIPPING_DIST;
             }

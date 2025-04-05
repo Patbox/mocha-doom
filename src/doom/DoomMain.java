@@ -147,11 +147,14 @@ import m.MenuMisc;
 import m.Settings;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.MAPFRACUNIT;
+
+import mapinfo.MapEntry;
+import mapinfo.UMAPINFO;
 import mochadoom.Engine;
 import mochadoom.Loggers;
 import mochadoom.SystemHandler;
-import mochadoom.tick.GameTick;
-import mochadoom.tick.RemoteTicker;
+import timing.GameTick;
+import timing.RemoteTicker;
 import n.DoomSystemNetworking;
 import n.DummyNetworkDriver;
 import p.AbstractLevelLoader;
@@ -181,6 +184,8 @@ import static utils.C2JUtils.eval;
 import static utils.C2JUtils.flags;
 import static utils.C2JUtils.memcpy;
 import static utils.C2JUtils.memset;
+
+import utils.TriState;
 import v.DoomGraphicSystem;
 import v.renderers.BppMode;
 import static v.renderers.DoomScreen.FG;
@@ -239,6 +244,21 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
     public int eventtail;
 
     public boolean runLoop = false;
+
+    public String getMapLumpName(int episode, int map) {
+        if (this.isCommercial()) {
+            if (map < 10) {
+                return "MAP0" + map;
+            } else {
+                return "MAP" + map;
+            }
+        } else {
+            return ("E"
+                    + (char) ('0' + episode)
+                    + "M"
+                    + (char) ('0' + map));
+        }
+    }
 
     /**
      * D_PostEvent
@@ -855,7 +875,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             String[] name = {
                 "e2m1", "e2m2", "e2m3", "e2m4", "e2m5", "e2m6", "e2m7", "e2m8", "e2m9",
                 "e3m1", "e3m3", "e3m3", "e3m4", "e3m5", "e3m6", "e3m7", "e3m8", "e3m9",
-                "dphoof", "bfgga0", "heada1", "cybra1", "spida1d1"
+                "dphoof", "bfgga0", "heada1", "cybra1"
             };
             int i;
 
@@ -867,7 +887,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             // Check for fake IWAD with right name,
             // but w/o all the lumps of the registered version.
             if (isRegistered()) {
-                for (i = 0; i < 23; i++) {
+                for (i = 0; i < name.length; i++) {
                     if (wadLoader.CheckNumForName(name[i].toUpperCase()) < 0) {
                         doomSystem.Error("This is not the registered version: " + name[i]);
                     }
@@ -1242,6 +1262,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
          *
          * @SourceCode.Compatible
          */
+
         if (Engine.getConfig().equals(Settings.fix_sky_change, Boolean.TRUE) && (isCommercial()
                 || (gamemission == GameMission_t.pack_tnt)
                 || (gamemission == GameMission_t.pack_plut))) {
@@ -1253,11 +1274,22 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             textureManager.setSkyFlatNum(textureManager.FlatNumForName(SKYFLATNAME));
 
             textureManager.setSkyTexture(textureManager.TextureNumForName("SKY3"));
-            if (gamemap < 12) {
+            if (gamemap.map() < 12) {
                 textureManager.setSkyTexture(textureManager.TextureNumForName("SKY1"));
             } else {
-                if (gamemap < 21) {
+                if (gamemap.map() < 21) {
                     textureManager.setSkyTexture(textureManager.TextureNumForName("SKY2"));
+                }
+            }
+        }
+
+
+
+        if (this.mapInfo != null) {
+            var map = this.mapInfo.maps().get(gamemap.lumpName());
+            if (map != null) {
+                if (map.skyTexture != null) {
+                    textureManager.setSkyTexture(textureManager.TextureNumForName(map.skyTexture));
                 }
             }
         }
@@ -1280,7 +1312,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         try {
             P_SetupLevel:
             {
-                levelLoader.SetupLevel(gameepisode, gamemap, 0, gameskill);
+                levelLoader.SetupLevel(gamemap, 0, gameskill);
             }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failure loading level.", e);
@@ -1879,14 +1911,18 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
     // Here's for the german edition.
     public void SecretExitLevel() {
+        var entry = getMapEntry(this.gamemap);
+
         // IF NO WOLF3D LEVELS, NO SECRET EXIT!
-        secretexit = !(isCommercial() && (wadLoader.CheckNumForName("MAP31") < 0));
+        secretexit = (entry != null && entry.nextSecretMap != null) || entry == null && !(isCommercial() && (wadLoader.CheckNumForName("MAP31") < 0));
         gameaction = ga_completed;
     }
 
     @SourceCode.Exact
     @G_Game.C(G_DoCompleted)
     protected void DoCompleted() {
+        var entry = getMapEntry(gamemap);
+
         gameaction = ga_nothing;
 
         for (int i = 0; i < MAXPLAYERS; i++) {
@@ -1906,7 +1942,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         }
 
         if (!isCommercial()) {
-            switch (gamemap) {
+            switch (gamemap.map()) {
                 case 8:
                     // MAES: end of episode
                     gameaction = ga_victory;
@@ -1923,61 +1959,67 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         }
 
         wminfo.didsecret = players[consoleplayer].didsecret;
-        wminfo.epsd = gameepisode - 1;
-        wminfo.last = gamemap - 1;
+        wminfo.lastMap = gamemap;
 
-        // wminfo.next is 0 biased, unlike gamemap
-        if (isCommercial()) {
+        if (entry != null && entry.nextMap != null) {
             if (secretexit) {
-                switch (gamemap) {
-                    case 2:
-                        wminfo.next = 32; //Fix Doom 3 BFG Edition, MAP02 secret exit to MAP33 Betray
-                        break;
-                    case 15:
-                        wminfo.next = 30;
-                        break;
-                    case 31:
-                        wminfo.next = 31;
-                        break;
-                    default:
-                        break;
-                }
+                wminfo.nextMap = entry.nextSecretMap != null ? entry.nextSecretMap : entry.nextMap;
             } else {
-                switch (gamemap) {
-                    case 31:
-                    case 32:
-                        wminfo.next = 15;
-                        break;
-                    case 33:
-                        wminfo.next = 2; //Fix Doom 3 BFG Edition, MAP33 Betray exit back to MAP03
-                        break;
-                    default:
-                        wminfo.next = gamemap;
-                }
+                wminfo.nextMap = entry.nextMap;
             }
         } else {
-            if (secretexit) {
-                wminfo.next = 8; // go to secret level
-            } else if (gamemap == 9) {
-                // returning from secret level
-                switch (gameepisode) {
-                    case 1:
-                        wminfo.next = 3;
-                        break;
-                    case 2:
-                        wminfo.next = 5;
-                        break;
-                    case 3:
-                        wminfo.next = 6;
-                        break;
-                    case 4:
-                        wminfo.next = 2;
-                        break;
-                    default:
-                        break;
+            if (isCommercial()) {
+                if (secretexit) {
+                    switch (gamemap.map()) {
+                        case 2:
+                            wminfo.nextMap = gamemap.withMap(33); //Fix Doom 3 BFG Edition, MAP02 secret exit to MAP33 Betray
+                            break;
+                        case 15:
+                            wminfo.nextMap = gamemap.withMap(31);
+                            break;
+                        case 31:
+                            wminfo.nextMap = gamemap.withMap(32);
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    switch (gamemap.map()) {
+                        case 31:
+                        case 32:
+                            wminfo.nextMap = gamemap.withMap(16);
+                            break;
+                        case 33:
+                            wminfo.nextMap = gamemap.withMap(3); //Fix Doom 3 BFG Edition, MAP33 Betray exit back to MAP03
+                            break;
+                        default:
+                            wminfo.nextMap = gamemap.withNextMap();
+                    }
                 }
             } else {
-                wminfo.next = gamemap; // go to next level
+                if (secretexit) {
+                    wminfo.nextMap = gamemap.withMap(9); // go to secret level
+                } else if (gamemap.map() == 9) {
+                    // returning from secret level
+                    switch (gamemap.episode()) {
+                        case 1:
+                            wminfo.nextMap = gamemap.withMap(4);
+                            break;
+                        case 2:
+                            wminfo.nextMap = gamemap.withMap(6);
+                            break;
+                        case 3:
+                            wminfo.nextMap = gamemap.withMap(7);
+                            break;
+                        case 4:
+                            wminfo.nextMap = gamemap.withMap(3);
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    wminfo.nextMap = gamemap.withNextMap(); // go to next level
+                }
             }
         }
 
@@ -1986,12 +2028,14 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         wminfo.maxsecret = totalsecret;
         wminfo.maxfrags = 0;
 
-        if (isCommercial()) {
-            wminfo.partime = 35 * cpars[gamemap - 1];
-        } else if (gameepisode >= pars.length) {
+        if (entry != null && entry.partime != -1) {
+            wminfo.partime = 35 * entry.partime;
+        } if (isCommercial() && cpars.length > gamemap.map()) {
+            wminfo.partime = 35 * cpars[gamemap.map() - 1];
+        } else if (gamemap.episode() >= pars.length) {
             wminfo.partime = 0;
-        } else {
-            wminfo.partime = 35 * pars[gameepisode][gamemap];
+        } else if (pars[gamemap.episode()].length > gamemap.map()) {
+            wminfo.partime = 35 * pars[gamemap.episode()][gamemap.map()];
         }
 
         wminfo.pnum = consoleplayer;
@@ -2019,6 +2063,14 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         }
     }
 
+    public MapEntry getMapEntry(MapId mapId) {
+        if (this.mapInfo == null) {
+            return null;
+        }
+
+        return this.mapInfo.maps().get(mapId.lumpName());
+    }
+
     /**
      * G_WorldDone
      */
@@ -2029,8 +2081,16 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             players[consoleplayer].didsecret = true;
         }
 
+        var entry = getMapEntry(gamemap);
+        if (entry != null && entry.endgame != TriState.DEFAULT) {
+            if (entry.endgame == TriState.TRUE) {
+                finale.StartFinale();
+            }
+            return;
+        }
+
         if (isCommercial()) {
-            switch (gamemap) {
+            switch (gamemap.map()) {
                 case 15:
                 case 31:
                     if (!secretexit) {
@@ -2048,7 +2108,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
     public void DoWorldDone() {
         gamestate = GS_LEVEL;
-        gamemap = wminfo.next + 1;
+        gamemap = wminfo.nextMap;
         DoLoadLevel();
         gameaction = ga_nothing;
         viewactive = true;
@@ -2098,14 +2158,13 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             // Ok so far, reopen stream.
             f = new DataInputStream(new BufferedInputStream(SystemHandler.instance.getSaveDataInputStream(savename)));
             gameskill = header.getGameskill();
-            gameepisode = header.getGameepisode();
-            gamemap = header.getGamemap();
+            gamemap = new MapId(getMapLumpName(header.getGameepisode(), header.getGamemap()), header.getGameepisode(), header.getGamemap());
             System.arraycopy(header.getPlayeringame(), 0, playeringame, 0, MAXPLAYERS);
 
             // load a base level
             G_InitNew:
             {
-                InitNew(gameskill, gameepisode, gamemap);
+                InitNew(gameskill, gamemap);
             }
 
             if (gameaction == ga_failure) {
@@ -2193,8 +2252,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             header.setName(description);
             header.setVersion(String.format("version %d", VERSION));
             header.setGameskill(gameskill);
-            header.setGameepisode(gameepisode);
-            header.setGamemap(gamemap);
+            header.setGameepisode(gamemap.episode());
+            header.setGamemap(gamemap.map());
             header.setPlayeringame(playeringame);
             header.setLeveltime(leveltime);
             dsg.setHeader(header);
@@ -2227,13 +2286,11 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
     }
 
     skill_t d_skill;
-    int d_episode;
-    int d_map;
+    MapId d_levelId = new MapId("E1M1", 1, 1);
 
-    public void DeferedInitNew(skill_t skill, int episode, int map) {
+    public void DeferedInitNew(skill_t skill, MapId levelId) {
         d_skill = skill;
-        d_episode = episode;
-        d_map = map;
+        d_levelId = levelId;
         gameaction = ga_newgame;
     }
 
@@ -2251,7 +2308,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         consoleplayer = 0;
         G_InitNew:
         {
-            InitNew(d_skill, d_episode, d_map);
+            InitNew(d_skill, d_levelId);
         }
         gameaction = ga_nothing;
     }
@@ -2263,11 +2320,11 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
      */
     @SourceCode.Compatible
     @G_Game.C(G_InitNew)
-    public void InitNew(skill_t skill, int episode, int map) {
-        InitNew(skill, episode, map, false);
+    public void InitNew(skill_t skill, MapId levelId) {
+        InitNew(skill, levelId, false);
     }
 
-    private void InitNew(skill_t skill, int episode, int map, boolean noSwitchRandom) {
+    private void InitNew(skill_t skill, MapId mapId, boolean noSwitchRandom) {
         if (paused) {
             paused = false;
             S_ResumeSound:
@@ -2283,11 +2340,11 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         // This was quite messy with SPECIAL and commented parts.
         // Supposedly hacks to make the latest edition work.
         // It might not work properly.
-        if (episode < 1) {
+        /*if (episode < 1) {
             episode = 1;
-        }
+        }*/
 
-        if (isRetail()) {
+        /*if (isRetail()) {
             if (episode > 4) {
                 episode = 4;
             }
@@ -2307,7 +2364,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
         if ((map > 9) && (!isCommercial())) {
             map = 9;
-        }
+        }*/
 
         /**
          * I wrote it that way. No worries JavaRandom will never be picked on vanilla demo playback
@@ -2360,21 +2417,20 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         demoplayback = false;
         automapactive = false;
         viewactive = true;
-        gameepisode = episode;
-        gamemap = map;
+        gamemap = mapId;
         gameskill = skill;
         viewactive = true;
 
         // set the sky map for the episode
         if (isCommercial()) {
             textureManager.setSkyTexture(textureManager.TextureNumForName("SKY3"));
-            if (gamemap < 12) {
+            if (gamemap.map() < 12) {
                 textureManager.setSkyTexture(textureManager.TextureNumForName("SKY1"));
-            } else if (gamemap < 21) {
+            } else if (gamemap.map() < 21) {
                 textureManager.setSkyTexture(textureManager.TextureNumForName("SKY2"));
             }
         } else {
-            switch (episode) {
+            switch (mapId.episode()) {
                 case 1:
                     textureManager.setSkyTexture(textureManager.TextureNumForName("SKY1"));
                     break;
@@ -2478,8 +2534,8 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
     public void BeginRecording() {
         demobuffer.setVersion(cVarManager.bool(CommandVariable.JAVARANDOM) ? VERSION | JAVARANDOM_MASK : VERSION);
         demobuffer.setSkill(gameskill);
-        demobuffer.setEpisode(gameepisode);
-        demobuffer.setMap(gamemap);
+        demobuffer.setEpisode(gamemap.episode());
+        demobuffer.setMap(gamemap.map());
         demobuffer.setDeathmatch(deathmatch);
         demobuffer.setRespawnparm(respawnparm);
         demobuffer.setFastparm(fastparm);
@@ -2554,7 +2610,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         precache = false;
         G_InitNew:
         {
-            InitNew(skill, episode, map, true);
+            InitNew(skill, new MapId(getMapLumpName(episode, map), episode, map), true);
         }
         precache = true;
 
@@ -2744,6 +2800,12 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             LOGGER.log(Level.SEVERE, "Could not init WAD files", e1);
         }
 
+
+        var umapInfo = wadLoader.CheckNumForName("UMAPINFO");
+        if (umapInfo != -1) {
+            this.mapInfo = wadLoader.CacheLumpNum(umapInfo, 0, UMAPINFO.class);
+        }
+
         // Video Renderer
         this.graphicSystem = SystemHandler.instance.createGraphicsSystem(this);
 
@@ -2869,7 +2931,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
                 if (fastdemo) {
                     timingdemo = true;
                 }
-                InitNew(startskill, startepisode, startmap);
+                InitNew(startskill, startmap);
                 gamestate = GS_DEMOSCREEN;
                 DeferedPlayDemo(loaddemo);
                 break ChooseLoop; // DoomLoop();  // never returns
@@ -2877,7 +2939,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
             if (gameaction != ga_loadgame) {
                 if (autostart || netgame) {
-                    InitNew(startskill, startepisode, startmap);
+                    InitNew(startskill, startmap);
                 } else {
                     StartTitle();                // start up intro loop
                 }
@@ -3069,8 +3131,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         // get skill / episode / map from parms
         // FIXME: should get them FROM THE DEMO itself.
         startskill = skill_t.sk_medium;
-        startepisode = 1;
-        startmap = 1;
+        startmap = new MapId(getMapLumpName(1, 1), 1,1);
         //autostart = false;
 
         if (cVarManager.present(CommandVariable.NOVERT)) {
@@ -3091,8 +3152,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         });
 
         cVarManager.with(CommandVariable.EPISODE, 0, (Integer ep) -> {
-            startepisode = ep;
-            startmap = 1;
+            startmap = new MapId(getMapLumpName(ep, 1), ep, 1);
             autostart = true;
         });
 
@@ -3109,16 +3169,14 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         // MAES 31/5/2011: added support for +map variation.
         cVarManager.with(CommandVariable.WARP, 0, (CommandVariable.WarpFormat w) -> {
             final CommandVariable.WarpMetric metric = w.getMetric(isCommercial());
-            startepisode = metric.getEpisode();
-            startmap = metric.getMap();
+            startmap = new MapId(getMapLumpName(metric.getEpisode(), metric.getMap()), metric.getEpisode(), metric.getMap());
             autostart = true;
         });
 
         // Maes: 1/6/2011 Added +map support
         cVarManager.with(CommandVariable.MAP, 0, (CommandVariable.MapFormat m) -> {
             final CommandVariable.WarpMetric metric = m.getMetric(isCommercial());
-            startepisode = metric.getEpisode();
-            startmap = metric.getMap();
+            startmap = new MapId(getMapLumpName(metric.getEpisode(), metric.getMap()), metric.getEpisode(), metric.getMap());
             autostart = true;
         });
 
@@ -3650,8 +3708,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
 
                     nomonsters = (netbuffer.retransmitfrom & 0x20) > 0;
                     respawnparm = (netbuffer.retransmitfrom & 0x10) > 0;
-                    startmap = netbuffer.starttic & 0x3f;
-                    startepisode = netbuffer.starttic >> 6;
+                    startmap = MapId.parse(getMapLumpName(netbuffer.starttic >> 6, netbuffer.starttic & 0x3f));
                     return;
                 }
             }
@@ -3676,7 +3733,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
                         netbuffer.retransmitfrom |= 0x10;
                     }
 
-                    netbuffer.starttic = (byte) (startepisode * 64 + startmap);
+                    netbuffer.starttic = (byte) (startmap.episode() * 64 + startmap.map());
                     netbuffer.player = VERSION;
                     netbuffer.numtics = 0;
                     HSendPacket(i, NCMD_SETUP);
@@ -3730,7 +3787,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         }
 
         LOGGER.log(Level.FINE, String.format("startskill %s, deathmatch: %s, startmap: %d, startepisode: %d",
-                startskill.toString(), Boolean.toString(deathmatch), startmap, startepisode));
+                startskill.toString(), Boolean.toString(deathmatch), startmap.map(), startmap.episode()));
 
         // read values out of doomcom
         ticdup = doomcom.ticdup;

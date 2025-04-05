@@ -1,4 +1,4 @@
-package mochadoom.tick;
+package timing;
 
 import java.io.IOException;
 

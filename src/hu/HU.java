@@ -436,17 +436,31 @@ public class HU implements IHeadsUp {
         // (typically once per level). They need to be aware of game progress,
         // and episode numbers <1 will cause it to bomb.
         // MAES: hack to handle Betray in XBLA 31/5/2011
-        if ((DOOM.gamemap > 32) && (DOOM.getGameMode() == GameMode.pack_xbla)) {
-            this.HU_TITLE = mapnames[(DOOM.gameepisode - 1) * 9 + DOOM.gamemap - 2];
+        var entry = DOOM.getMapEntry(DOOM.gamemap);
 
-            this.HU_TITLE2 = mapnames2[DOOM.gamemap - 1];
-            this.HU_TITLEP = mapnamesp[DOOM.gamemap - 2]; // fixed from HU_TITLEPw
-            this.HU_TITLET = mapnamest[DOOM.gamemap - 2];
+        if (entry != null && entry.levelName != null) {
+            var b = new StringBuilder();
+            //noinspection OptionalAssignedToNull
+            if (entry.label != null) {
+                b.append(entry.label.orElse(""));
+            } else {
+                b.append(entry.mapId).append(": ");
+            }
+            b.append(entry.levelName);
+            this.HU_TITLE = this.HU_TITLE2 = this.HU_TITLEP = this.HU_TITLET = b.toString();
         } else {
-            this.HU_TITLE = mapnames[(DOOM.gameepisode - 1) * 9 + DOOM.gamemap - 1];
-            this.HU_TITLE2 = mapnames2[DOOM.gamemap - 1];
-            this.HU_TITLEP = mapnamesp[DOOM.gamemap - 1]; // fixed from HU_TITLEP
-            this.HU_TITLET = mapnamest[DOOM.gamemap - 1];
+            if ((DOOM.gamemap.map() > 32) && (DOOM.getGameMode() == GameMode.pack_xbla)) {
+                this.HU_TITLE = mapnames[(DOOM.gamemap.episode() - 1) * 9 + DOOM.gamemap.map() - 2];
+
+                this.HU_TITLE2 = mapnames2[DOOM.gamemap.map() - 1];
+                this.HU_TITLEP = mapnamesp[DOOM.gamemap.map() - 2]; // fixed from HU_TITLEPw
+                this.HU_TITLET = mapnamest[DOOM.gamemap.map() - 2];
+            } else {
+                this.HU_TITLE = mapnames[(DOOM.gamemap.episode() - 1) * 9 + DOOM.gamemap.map() - 1];
+                this.HU_TITLE2 = mapnames2[DOOM.gamemap.map() - 1];
+                this.HU_TITLEP = mapnamesp[DOOM.gamemap.map() - 1]; // fixed from HU_TITLEP
+                this.HU_TITLET = mapnamest[DOOM.gamemap.map() - 1];
+            }
         }
 
         if (headsupactive) {

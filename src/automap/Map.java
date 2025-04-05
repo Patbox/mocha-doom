@@ -178,7 +178,8 @@ import static data.Limits.MAXPLAYERS;
 import static data.Tables.finecosine;
 import static data.Tables.finesine;
 import static data.Tables.toBAMIndex;
-import doom.DoomMain;
+
+import doom.*;
 import doom.SourceCode.AM_Map;
 import static doom.SourceCode.AM_Map.AM_Responder;
 import static doom.englsh.AMSTR_FOLLOWOFF;
@@ -187,9 +188,7 @@ import static doom.englsh.AMSTR_GRIDOFF;
 import static doom.englsh.AMSTR_GRIDON;
 import static doom.englsh.AMSTR_MARKEDSPOT;
 import static doom.englsh.AMSTR_MARKSCLEARED;
-import doom.event_t;
-import doom.evtype_t;
-import doom.player_t;
+
 import g.Signals.ScanCode;
 import static g.Signals.ScanCode.SC_0;
 import static g.Signals.ScanCode.SC_C;
@@ -874,7 +873,7 @@ public class Map<T, V> implements IAutoMap<T, V> {
     }
 
     // More "static" stuff.
-    protected int lastlevel = -1, lastepisode = -1;
+    protected MapId lastmap = new MapId("", -1, -1);
 
     @Override
     public final void Start() {
@@ -883,10 +882,9 @@ public class Map<T, V> implements IAutoMap<T, V> {
         }
 
         stopped = false;
-        if (lastlevel != DOOM.gamemap || lastepisode != DOOM.gameepisode) {
+        if (!lastmap.equals(DOOM.gamemap)) {
             this.LevelInit();
-            lastlevel = DOOM.gamemap;
-            lastepisode = DOOM.gameepisode;
+            lastmap = DOOM.gamemap;
         }
         this.initVectorGraphics();
         this.LevelInit();

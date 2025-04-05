@@ -16,7 +16,7 @@ public interface IDoomGame {
     /** Can be called by the startup code or M_Responder.
      A normal game starts at map 1,
      but a warp test can start elsewhere */
-    public void DeferedInitNew(skill_t skill, int episode, int map);
+    public void DeferedInitNew(skill_t skill, MapId mapId);
 
     /** Can be called by the startup code or M_Responder,
      calls P_SetupLevel or W_EnterWorld. */

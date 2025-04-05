@@ -24,10 +24,7 @@ import data.mapthing_t;
 import data.mapvertex_t;
 import defines.skill_t;
 import defines.slopetype_t;
-import doom.CommandVariable;
-import doom.DoomMain;
-import doom.DoomStatus;
-import doom.SourceCode;
+import doom.*;
 import doom.SourceCode.CauseOfDesyncProbability;
 import doom.SourceCode.P_Setup;
 import static doom.SourceCode.P_Setup.P_LoadThings;
@@ -1971,7 +1968,7 @@ public class BoomLevelLoader extends AbstractLevelLoader {
     @Override
     @SourceCode.Suspicious(CauseOfDesyncProbability.LOW)
     @P_Setup.C(P_SetupLevel)
-    public void SetupLevel(int episode, int map, int playermask, skill_t skill) throws IOException {
+    public void SetupLevel(MapId map, int playermask, skill_t skill) throws IOException {
         String lumpname;
         int lumpnum;
 
@@ -2020,14 +2017,14 @@ public class BoomLevelLoader extends AbstractLevelLoader {
 
         // find map name
         if (DOOM.isCommercial()) {
-            lumpname = String.format("map%02d", map); // killough 1/24/98:
+            lumpname = String.format("map%02d", map.map()); // killough 1/24/98:
             // simplify
-            gl_lumpname = String.format("gl_map%02d", map); // figgi
+            gl_lumpname = String.format("gl_map%02d", map.map()); // figgi
         } else {
-            lumpname = String.format("E%dM%d", episode, map); // killough
+            lumpname = String.format("E%dM%d", map.episode(), map.map()); // killough
             // 1/24/98:
             // simplify
-            gl_lumpname = String.format("GL_E%dM%d", episode, map); // figgi
+            gl_lumpname = String.format("GL_E%dM%d", map.episode(), map.map()); // figgi
         }
 
         W_GetNumForName:
@@ -2057,10 +2054,10 @@ public class BoomLevelLoader extends AbstractLevelLoader {
         // It is important for OpenGL, because in case of the same data in
         // memory
         // we can skip recalculation of much stuff
-        samelevel = (map == current_map) && (episode == current_episode) && (nodesVersion == current_nodesVersion);
+        samelevel = (map.map() == current_map) && (map.episode() == current_episode) && (nodesVersion == current_nodesVersion);
 
-        current_episode = episode;
-        current_map = map;
+        current_episode = map.episode();
+        current_map = map.map();
         current_nodesVersion = nodesVersion;
 
         if (!samelevel) {

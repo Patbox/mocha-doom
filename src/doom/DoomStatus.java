@@ -40,6 +40,7 @@ import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import m.Settings;
+import mapinfo.MapInfo;
 import mochadoom.Engine;
 import p.mobj_t;
 
@@ -84,6 +85,8 @@ public abstract class DoomStatus<T, V> {
      *  etc. can be handled more cleanly.
      * */
     private GameMode gamemode;
+
+    public MapInfo mapInfo = null;
 
     public void setGameMode(GameMode mode) {
         this.gamemode = mode;
@@ -136,18 +139,14 @@ public abstract class DoomStatus<T, V> {
     /** Defaults for menu, methinks. */
     public skill_t startskill;
 
-    public int startepisode;
-
-    public int startmap;
+    public MapId startmap;
 
     public boolean autostart;
 
     /** Selected by user */
     public skill_t gameskill;
 
-    public int gameepisode;
-
-    public int gamemap;
+    public MapId gamemap;
 
     /** Nightmare mode flag, single player. */
     public boolean respawnmonsters;

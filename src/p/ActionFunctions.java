@@ -148,7 +148,7 @@ public class ActionFunctions extends UnifiedGameMap implements
 
     @Override
     public int MapNumber() {
-        return DOOM.gamemap;
+        return DOOM.gamemap.map();
     }
 
     @Override

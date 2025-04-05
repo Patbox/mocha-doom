@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import doom.MapId;
 import m.BBox;
 import static m.BBox.BOXBOTTOM;
 import static m.BBox.BOXLEFT;
@@ -661,10 +663,9 @@ public class LevelLoader extends AbstractLevelLoader {
 
     @Override
     public void
-            SetupLevel(int episode,
-                    int map,
+            SetupLevel(MapId map,
                     int playermask,
-                    skill_t skill) {
+                       skill_t skill) {
         int i;
         String lumpname;
         int lumpnum;
@@ -702,18 +703,7 @@ public class LevelLoader extends AbstractLevelLoader {
             DOOM.wadLoader.Reload();
 
             // find map name
-            if (DOOM.isCommercial()) {
-                if (map < 10) {
-                    lumpname = "MAP0" + map;
-                } else {
-                    lumpname = "MAP" + map;
-                }
-            } else {
-                lumpname = ("E"
-                        + (char) ('0' + episode)
-                        + "M"
-                        + (char) ('0' + map));
-            }
+            lumpname = map.lumpName();
 
             lumpnum = DOOM.wadLoader.GetNumForName(lumpname);
 

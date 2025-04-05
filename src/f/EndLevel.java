@@ -150,6 +150,9 @@ import doom.event_t;
 import doom.player_t;
 import doom.wbplayerstruct_t;
 import doom.wbstartstruct_t;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mochadoom.Loggers;
@@ -177,6 +180,8 @@ public class EndLevel<T, V> extends AbstractEndLevel {
     private static final int COUNT_SECRETS = 6;
     private static final int COUNT_TIME = 8;
     private static final int COUNT_DONE = 10;
+    private patch_t toUnloadNext1;
+    private patch_t toUnloadNext2;
 
     static enum endlevel_state {
         NoState,
@@ -323,6 +328,8 @@ public class EndLevel<T, V> extends AbstractEndLevel {
      */
     patch_t[] lnames;
 
+    List<patch_t> loadedPatches = new ArrayList<>();
+
     //
     // CODE
     //
@@ -360,12 +367,29 @@ public class EndLevel<T, V> extends AbstractEndLevel {
      */
     protected void drawLF() {
         int y = WI_TITLEY;
+        var entry = DOOM.getMapEntry(wbs.lastMap);
 
-        // draw <LevelName>
-        DOOM.graphicSystem.DrawPatchScaled(FG, lnames[wbs.last], DOOM.vs, (320 - lnames[wbs.last].width) / 2, y);
+        if (this.toUnloadNext1 != null) {
+            DOOM.wadLoader.UnlockLumpNum(this.toUnloadNext1);
+            toUnloadNext1 = null;
+        }
 
-        // draw "Finished!"
-        y += (5 * lnames[wbs.last].height) / 4;
+        patch_t patch;
+        if (lnames.length != 0) {
+            patch = lnames[wbs.lastMap.map() - 1];
+        } else if (entry != null && entry.levelpic != null) {
+            patch = this.toUnloadNext2 = DOOM.wadLoader.CacheLumpName(entry.levelpic, PU_STATIC, patch_t.class);
+        } else {
+            patch = null;
+        }
+
+        if (patch != null) {
+            // draw <LevelName>
+            DOOM.graphicSystem.DrawPatchScaled(FG, patch, DOOM.vs, (320 - patch.width) / 2, y);
+
+            // draw "Finished!"
+            y += (5 * patch.height) / 4;
+        }
 
         DOOM.graphicSystem.DrawPatchScaled(FG, finished, DOOM.vs, (320 - finished.width) / 2, y);
     }
@@ -375,6 +399,12 @@ public class EndLevel<T, V> extends AbstractEndLevel {
      */
     protected void drawEL() {
         int y = WI_TITLEY; // This is in 320 x 200 coords!
+        var entry = DOOM.getMapEntry(wbs.nextMap);
+
+        if (this.toUnloadNext2 != null) {
+            DOOM.wadLoader.UnlockLumpNum(this.toUnloadNext2);
+            toUnloadNext2 = null;
+        }
 
         // draw "Entering"
         DOOM.graphicSystem.DrawPatchScaled(FG, entering, DOOM.vs, (320 - entering.width) / 2, y);
@@ -384,13 +414,24 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         // FIXME: this is only useful in a handful of prBoom+ maps, which use
         // a modified endlevel screen. The reason it works there is the behavior of the
         // unified patch drawing function, which is approximated with this hack.
-        if (lnames[wbs.next].topoffset == 0) {
-            y += (5 * lnames[wbs.next].height) / 4;
+
+        patch_t patch;
+        if (lnames.length != 0) {
+            patch = lnames[wbs.lastMap.map() - 1];
+        } else if (entry != null && entry.levelpic != null) {
+            patch = this.toUnloadNext1 = DOOM.wadLoader.CacheLumpName(entry.levelpic, PU_STATIC, patch_t.class);
+        } else {
+            patch = null;
         }
-        // draw level.
 
-        DOOM.graphicSystem.DrawPatchScaled(FG, lnames[wbs.next], DOOM.vs, (320 - lnames[wbs.next].width) / 2, y);
+        if (patch != null) {
+            if (patch.topoffset == 0) {
+                y += (5 * patch.height) / 4;
+            }
+            // draw level.
+        }
 
+        DOOM.graphicSystem.DrawPatchScaled(FG, patch, DOOM.vs, (320 - patch.width) / 2, y);
     }
 
     /**
@@ -422,9 +463,11 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         boolean fits = false;
 
         i = 0;
+        var patch = lnodes[wbs.lastMap.episode() - 1][n];
+
         do {
-            left = lnodes[wbs.epsd][n].x - c[i].leftoffset;
-            top = lnodes[wbs.epsd][n].y - c[i].topoffset;
+            left = patch.x - c[i].leftoffset;
+            top = patch.y - c[i].topoffset;
             right = left + c[i].width;
             bottom = top + c[i].height;
 
@@ -439,9 +482,9 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         } while (!fits && i != 2 && c[i] != null);
 
         if (fits && i < 2) {
-            //V.DrawPatch(lnodes[wbs.epsd][n].x, lnodes[wbs.epsd][n].y,
+            //V.DrawPatch(lnodes[wbs.lastMap.episode() - 1][n].x, lnodes[wbs.lastMap.episode() - 1][n].y,
             //	    FB, c[i]);
-            DOOM.graphicSystem.DrawPatchScaled(FG, c[i], DOOM.vs, lnodes[wbs.epsd][n].x, lnodes[wbs.epsd][n].y);
+            DOOM.graphicSystem.DrawPatchScaled(FG, c[i], DOOM.vs, patch.x, patch.y);
         } else {
             // DEBUG
             LOGGER.log(Level.FINE, String.format("Could not place patch on level %d", n + 1));
@@ -457,12 +500,12 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             return;
         }
 
-        if (wbs.epsd > 2) {
+        if (wbs.lastMap.episode() > 3) {
             return;
         }
 
-        for (int i = 0; i < NUMANIMS[wbs.epsd]; i++) {
-            a = anims[wbs.epsd][i];
+        for (int i = 0; i < NUMANIMS[wbs.lastMap.episode() - 1]; i++) {
+            a = anims[wbs.lastMap.episode() - 1][i];
 
             // init variables
             a.ctr = -1;
@@ -495,13 +538,13 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             return;
         }
 
-        if (wbs.epsd > 2) {
+        if (wbs.lastMap.episode() > 3) {
             return;
         }
 
-        int aaptr = wbs.epsd;
+        int aaptr = wbs.lastMap.episode() - 1;
 
-        for (i = 0; i < NUMANIMS[wbs.epsd]; i++) {
+        for (i = 0; i < NUMANIMS[aaptr]; i++) {
             a = anims[aaptr][i];
 
             if (bcnt == a.nexttic) {
@@ -526,7 +569,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
                     case ANIM_LEVEL:
                         // gawd-awful hack for level anims
                         if (!(state == endlevel_state.StatCount && i == 7)
-                                && wbs.next == a.data1) {
+                                && wbs.nextMap.map() - 1 == a.data1) {
                             a.ctr++;
                             if (a.ctr == a.nanims) {
                                 a.ctr--;
@@ -549,12 +592,12 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             return;
         }
 
-        if (wbs.epsd > 2) {
+        if (wbs.lastMap.episode() > 3) {
             return;
         }
 
-        for (i = 0; i < NUMANIMS[wbs.epsd]; i++) {
-            a = anims[wbs.epsd][i];
+        for (i = 0; i < NUMANIMS[wbs.lastMap.episode() - 1]; i++) {
+            a = anims[wbs.lastMap.episode() - 1][i];
 
             if (a.ctr >= 0) {
                 DOOM.graphicSystem.DrawPatchScaled(FG, a.p[a.ctr], DOOM.vs, a.loc.x, a.loc.y);
@@ -677,31 +720,34 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             num[i] = null;
         }
 
-        if (DOOM.isCommercial()) {
-            for (i = 0; i < NUMCMAPS; i++) {
+        for (i = 0; i < lnames.length; i++) {
+            if (lnames[i] != null) {
                 DOOM.wadLoader.UnlockLumpNum(lnames[i]);
                 lnames[i] = null;
             }
-        } else {
-            DOOM.wadLoader.UnlockLumpNum(yah[0]);
-            yah[0] = null;
-            DOOM.wadLoader.UnlockLumpNum(yah[1]);
-            yah[1] = null;
+        }
 
-            DOOM.wadLoader.UnlockLumpNum(splat[0]);
-            splat[0] = null;
-
-            for (i = 0; i < NUMMAPS; i++) {
-                DOOM.wadLoader.UnlockLumpNum(lnames[i]);
-                lnames[i] = null;
-
+        if (!DOOM.isCommercial()) {
+            if (yah[0] != null) {
+                DOOM.wadLoader.UnlockLumpNum(yah[0]);
+                yah[0] = null;
             }
-            if (wbs.epsd < 3) {
-                for (j = 0; j < NUMANIMS[wbs.epsd]; j++) {
-                    if (wbs.epsd != 1 || j != 8) {
-                        for (i = 0; i < anims[wbs.epsd][j].nanims; i++) {
-                            DOOM.wadLoader.UnlockLumpNum(anims[wbs.epsd][j].p[i]);
-                            anims[wbs.epsd][j].p[i] = null;
+            if (yah[1] != null) {
+                DOOM.wadLoader.UnlockLumpNum(yah[1]);
+                yah[1] = null;
+            }
+
+            if (splat != null) {
+                DOOM.wadLoader.UnlockLumpNum(splat[0]);
+                splat[0] = null;
+            }
+
+            if (wbs.lastMap.episode() < 4) {
+                for (j = 0; j < NUMANIMS[wbs.lastMap.episode() - 1]; j++) {
+                    if (wbs.lastMap.episode() != 2 || j != 8) {
+                        for (i = 0; i < anims[wbs.lastMap.episode()][j].nanims; i++) {
+                            DOOM.wadLoader.UnlockLumpNum(anims[wbs.lastMap.episode() - 1][j].p[i]);
+                            anims[wbs.lastMap.episode() - 1][j].p[i] = null;
                         }
                     }
                 }
@@ -793,12 +839,12 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         drawAnimatedBack();
 
         if (!DOOM.isCommercial()) {
-            if (wbs.epsd > 2) {
+            if (wbs.lastMap.episode() > 3) {
                 drawEL();
                 return;
             }
 
-            last = (wbs.last == 8) ? wbs.next - 1 : wbs.last;
+            last = (wbs.lastMap.map() == 9) ? wbs.nextMap.map() - 2 : wbs.lastMap.map() - 1;
 
             // draw a splat on taken cities.
             for (i = 0; i <= last; i++) {
@@ -812,13 +858,13 @@ public class EndLevel<T, V> extends AbstractEndLevel {
 
             // draw flashing ptr
             if (snl_pointeron) {
-                drawOnLnode(wbs.next, yah);
+                drawOnLnode(wbs.nextMap.map() - 1, yah);
             }
         }
 
         // draws which level you are entering..
         if ((!DOOM.isCommercial())
-                || wbs.next != 30) {
+                || wbs.nextMap.map() != 31) {
             drawEL();
         }
 
@@ -1402,7 +1448,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         DOOM.graphicSystem.DrawPatchScaled(FG, time, DOOM.vs, SP_TIMEX, SP_TIMEY, V_NOSCALESTART);
         drawTime(DOOM.vs.getScreenWidth() / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
-        if (wbs.epsd < 3) {
+        if (wbs.lastMap.episode() < 4) {
             DOOM.graphicSystem.DrawPatchScaled(FG, par, DOOM.vs, DOOM.vs.getScreenWidth() / 2 + SP_TIMEX, SP_TIMEY, V_NOSCALESTART);
             drawTime(DOOM.vs.getScreenWidth() - SP_TIMEX, SP_TIMEY, cnt_par);
         }
@@ -1485,19 +1531,17 @@ public class EndLevel<T, V> extends AbstractEndLevel {
     @SourceCode.Compatible
     @WI_Stuff.C(WI_loadData)
     protected void loadData() {
-        String name;
+        var entry = DOOM.getMapEntry(wbs.lastMap);
+        String name = "INTERPIC";
         anim_t a;
 
-        if (DOOM.isCommercial()) {
-            name = "INTERPIC";
-        } else { //sprintf(name, "WIMAP%d", wbs.epsd);
-            name = ("WIMAP" + Integer.toString(wbs.epsd));
-        }
-
-        // MAES: For Ultimate Doom
-        if (DOOM.isRetail()) {
-            if (wbs.epsd == 3) {
+        if (entry != null && entry.exitPic != null) {
+            name = entry.exitPic;
+        } else {
+            if (DOOM.isCommercial()) {
                 name = "INTERPIC";
+            } else if (wbs.lastMap.episode() < 4) { //sprintf(name, "WIMAP%d", wbs.lastMap.episode() - 1);
+                name = ("WIMAP" + Integer.toString(wbs.lastMap.episode() - 1));
             }
         }
 
@@ -1515,7 +1559,9 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         //   pic++;
         // }
         //}
-        if (DOOM.isCommercial()) {
+        if (entry != null) {
+            lnames = new patch_t[0];
+        } else if (DOOM.isCommercial()) {
             NUMCMAPS = 32;
 
             lnames = new patch_t[NUMCMAPS];
@@ -1530,7 +1576,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             String xxx = "WILV%d%d";
 
             for (int i = 0; i < NUMMAPS; i++) {
-                name = String.format(xxx, wbs.epsd, i);
+                name = String.format(xxx, wbs.lastMap.episode() - 1, i);
                 lnames[i] = DOOM.wadLoader.CacheLumpName(name, PU_STATIC, patch_t.class);
             }
 
@@ -1545,16 +1591,16 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             // splat
             splat = new patch_t[]{DOOM.wadLoader.CacheLumpName("WISPLAT", PU_STATIC, patch_t.class), null};
 
-            if (wbs.epsd < 3) {
+            if (wbs.lastMap.episode() < 4) {
                 xxx = "WIA%d%02d%02d";
                 //xxx=new PrintfFormat("WIA%d%.2d%.2d");
-                for (int j = 0; j < NUMANIMS[wbs.epsd]; j++) {
-                    a = anims[wbs.epsd][j];
+                for (int j = 0; j < NUMANIMS[wbs.lastMap.episode() - 1]; j++) {
+                    a = anims[wbs.lastMap.episode() - 1][j];
                     for (int i = 0; i < a.nanims; i++) {
                         // MONDO HACK!
-                        if (wbs.epsd != 1 || j != 8) {
+                        if (wbs.lastMap.episode() - 1 != 1 || j != 8) {
                             // animations
-                            name = String.format(xxx, wbs.epsd, j, i);
+                            name = String.format(xxx, wbs.lastMap.episode() - 1, j, i);
                             a.p[i] = DOOM.wadLoader.CacheLumpName(name, PU_STATIC, patch_t.class);
                         } else {
                             // HACK ALERT!
@@ -1676,13 +1722,13 @@ public void WI_unloadData()
 	for (i=0 ; i<NUMMAPS ; i++)
 	    W.UnlockLumpNum(lnames[i], PU_CACHE);
 
-	if (wbs.epsd < 3)
+	if (wbs.lastMap.episode() - 1 < 3)
 	{
-	    for (j=0;j<NUMANIMS[wbs.epsd];j++)
+	    for (j=0;j<NUMANIMS[wbs.lastMap.episode() - 1];j++)
 	    {
-		if (wbs.epsd != 1 || j != 8)
-		    for (i=0;i<anims[wbs.epsd][j].nanims;i++)
-			W.UnlockLumpNum(anims[wbs.epsd][j].p[i], PU_CACHE);
+		if (wbs.lastMap.episode() - 1 != 1 || j != 8)
+		    for (i=0;i<anims[wbs.lastMap.episode() - 1][j].nanims;i++)
+			W.UnlockLumpNum(anims[wbs.lastMap.episode() - 1][j].p[i], PU_CACHE);
 	    }
 	}
     }
@@ -1748,13 +1794,13 @@ public void WI_unloadData()
         if (RANGECHECKING) {
             if (!DOOM.isCommercial()) {
                 if (DOOM.isRetail()) {
-                    RNGCHECK(wbs.epsd, 0, 3);
+                    RNGCHECK(wbs.lastMap.episode() - 1, 0, 3);
                 } else {
-                    RNGCHECK(wbs.epsd, 0, 2);
+                    RNGCHECK(wbs.lastMap.episode() - 1, 0, 2);
                 }
             } else {
-                RNGCHECK(wbs.last, 0, 8);
-                RNGCHECK(wbs.next, 0, 8);
+                RNGCHECK(wbs.lastMap.map() - 1, 0, 8);
+                RNGCHECK(wbs.nextMap.map() - 1, 0, 8);
             }
             RNGCHECK(wbs.pnum, 0, MAXPLAYERS);
             RNGCHECK(wbs.pnum, 0, MAXPLAYERS);
@@ -1779,11 +1825,11 @@ public void WI_unloadData()
         }
 
         // Sanity check for Ultimate.
-        if (!DOOM.isRetail()) {
-            if (wbs.epsd > 2) {
-                wbs.epsd -= 3;
+        /*if (!DOOM.isRetail()) {
+            if (wbs.lastMap.episode() > 3) {
+                wbs.lastMap.episode() -= 4;
             }
-        }
+        }*/
     }
 
     @SourceCode.Exact
