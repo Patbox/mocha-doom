@@ -20,7 +20,7 @@ sourceSets {
 }
 
 ext {
-    javaMainClass = 'mochadoom.DefaultSystemHandler'
+    javaMainClass = 'mochadoom.Engine'
 }
 
 java {

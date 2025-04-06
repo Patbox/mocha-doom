@@ -97,6 +97,10 @@ public class StringParser {
         this.next();
 
         while (!this.end() && this.peek() != '"') {
+            if (this.peek() == '\\' && this.index + 1 < this.string.length()) {
+                this.next();
+            }
+
             b.append(this.next());
         }
         this.next();

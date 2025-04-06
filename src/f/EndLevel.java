@@ -622,7 +622,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
         for (i = 0; i < NUMANIMS[wbs.lastMap.episode() - 1]; i++) {
             a = anims[wbs.lastMap.episode() - 1][i];
 
-            if (a.ctr >= 0) {
+            if (a.ctr >= 0 && a.p[a.ctr] != null) {
                 DOOM.graphicSystem.DrawPatchScaled(FG, a.p[a.ctr], DOOM.vs, a.loc.x, a.loc.y);
             }
         }
@@ -768,7 +768,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             if (wbs.lastMap.episode() < 4) {
                 for (j = 0; j < NUMANIMS[wbs.lastMap.episode() - 1]; j++) {
                     if (wbs.lastMap.episode() != 2 || j != 8) {
-                        for (i = 0; i < anims[wbs.lastMap.episode()][j].nanims; i++) {
+                        for (i = 0; i < anims[wbs.lastMap.episode() - 1][j].nanims; i++) {
                             DOOM.wadLoader.UnlockLumpNum(anims[wbs.lastMap.episode() - 1][j].p[i]);
                             anims[wbs.lastMap.episode() - 1][j].p[i] = null;
                         }
@@ -1602,7 +1602,9 @@ public class EndLevel<T, V> extends AbstractEndLevel {
                 name = String.format(xxx, wbs.lastMap.episode() - 1, i);
                 lnames[i] = DOOM.wadLoader.CacheLumpName(name, PU_STATIC, patch_t.class);
             }
+        }
 
+        if (!DOOM.isCommercial()) {
             // you are here
             yah[0] = DOOM.wadLoader.CacheLumpName("WIURH0", PU_STATIC, patch_t.class);
 
@@ -1615,7 +1617,7 @@ public class EndLevel<T, V> extends AbstractEndLevel {
             splat = new patch_t[]{DOOM.wadLoader.CacheLumpName("WISPLAT", PU_STATIC, patch_t.class), null};
 
             if (wbs.lastMap.episode() < 4) {
-                xxx = "WIA%d%02d%02d";
+                var xxx = "WIA%d%02d%02d";
                 //xxx=new PrintfFormat("WIA%d%.2d%.2d");
                 for (int j = 0; j < NUMANIMS[wbs.lastMap.episode() - 1]; j++) {
                     a = anims[wbs.lastMap.episode() - 1][j];

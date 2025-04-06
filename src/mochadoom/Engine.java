@@ -145,10 +145,19 @@ public class Engine {
     }
 
     public String getWindowTitle(double frames) {
-        if (cvm.bool(CommandVariable.SHOWFPS)) {
-            return String.format("%s - %s FPS: %.2f", Strings.MOCHA_DOOM_TITLE, DOOM.bppMode, frames);
+        var lvlName = DOOM.headsUp.levelName();
+        if (lvlName != null && !lvlName.isEmpty()) {
+            if (cvm.bool(CommandVariable.SHOWFPS)) {
+                return String.format("%s - %s | %s FPS: %.2f", DOOM.getGameName(), lvlName, DOOM.bppMode, frames);
+            } else {
+                return String.format("%s - %s", DOOM.getGameName(), lvlName);
+            }
         } else {
-            return String.format("%s - %s", Strings.MOCHA_DOOM_TITLE, DOOM.bppMode);
+            if (cvm.bool(CommandVariable.SHOWFPS)) {
+                return String.format("%s | %s FPS: %.2f", DOOM.getGameName(), DOOM.bppMode, frames);
+            } else {
+                return String.format("%s", DOOM.getGameName());
+            }
         }
     }
 

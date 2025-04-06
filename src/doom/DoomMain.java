@@ -4083,6 +4083,21 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
             players[consoleplayer].message = SCREENSHOT;
         }
     }
+
+    public String getGameName() {
+        return switch (this.getGameMode()) {
+            case freedm -> "FreeDM";
+            case pack_tnt -> "TNT: Evilution";
+            case freedoom1 -> "Freedoom: Phase 1";
+            case freedoom2 -> "Freedoom: Phase 2";
+            case shareware -> "Doom (Shareware)";
+            case commercial -> "Doom II";
+            case registered, pack_xbla -> "Doom";
+            case retail -> "The Ultimate Doom";
+            case pack_plut -> "Plutonia Experiment";
+            default -> "Mocha Doom";
+        };
+    }
 }
 
 //$Log: DoomMain.java,v $

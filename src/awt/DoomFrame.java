@@ -138,7 +138,7 @@ public class DoomFrame<Window extends Component & DoomWindow<Window>> extends JF
             LOGGER.log(Level.INFO, "Starting or switching fullscreen, have no Graphics2d yet, skipping paint");
         } else {
             draw(g2d, imageSupplier.get(), dim, this);
-            if (showFPS) {
+            //if (showFPS) {
                 ++frames;
                 final long now = System.currentTimeMillis();
                 final long lambda = now - lastTime;
@@ -147,7 +147,7 @@ public class DoomFrame<Window extends Component & DoomWindow<Window>> extends JF
                     frames = 0;
                     lastTime = now;
                 }
-            }
+            //}
         }
     }
 

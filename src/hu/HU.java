@@ -94,6 +94,8 @@ public class HU implements IHeadsUp {
                 HUSTR_CHATMACRO6, HUSTR_CHATMACRO7, HUSTR_CHATMACRO8,
                 HUSTR_CHATMACRO9};
 
+    private String levelName = "";
+
     @Override
     public void setChatMacro(int i, String s) {
         this.chat_macros[i] = s;
@@ -521,6 +523,7 @@ public class HU implements IHeadsUp {
         }
         headsupactive = true;
 
+        this.levelName = s;
     }
 
     @Override
@@ -1308,6 +1311,10 @@ public class HU implements IHeadsUp {
     @Override
     public patch_t[] getHUFonts() {
         return this.hu_font;
+    }
+
+    public String levelName() {
+        return this.levelName;
     }
 }
 
