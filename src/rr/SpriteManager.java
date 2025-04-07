@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
-import mochadoom.Loggers;
 import static utils.C2JUtils.memset;
 import static utils.GenericCopy.malloc;
 import w.lumpinfo_t;
@@ -24,7 +23,7 @@ import w.lumpinfo_t;
  */
 public class SpriteManager<T, V> implements ISpriteManager {
 
-    private static final Logger LOGGER = Loggers.getLogger(SpriteManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SpriteManager.class.getName());
 
     /** There seems to be an arbitrary limit of 29 distinct frames per THING */
     public static final int MAX_SPRITE_FRAMES = 29;

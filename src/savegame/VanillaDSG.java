@@ -24,10 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.Settings;
-import mochadoom.Engine;
-import mochadoom.Loggers;
 import mochadoom.SystemHandler;
 import p.Actions.ActionsLights.glow_t;
 import p.Actions.ActionsLights.lightflash_t;
@@ -54,7 +52,7 @@ import utils.C2JUtils;
 
 public class VanillaDSG<T, V> implements IDoomSaveGame {
 
-    private static final Logger LOGGER = Loggers.getLogger(VanillaDSG.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(VanillaDSG.class.getName());
 
     VanillaDSGHeader header;
     final DoomMain<T, V> DOOM;

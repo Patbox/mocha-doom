@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import p.ActiveStates.MobjConsumer;
 import static p.MapUtils.AproxDistance;
 import rr.subsector_t;
@@ -90,7 +89,7 @@ import w.IWritableDoomObject;
 public class mobj_t extends thinker_t implements ISoundOrigin, Interceptable,
         IWritableDoomObject, IPackableDoomObject, IReadableDoomObject {
 
-    private static final Logger LOGGER = Loggers.getLogger(mobj_t.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(mobj_t.class.getName());
 
     public final ActionFunctions A;
 

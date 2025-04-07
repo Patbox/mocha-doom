@@ -2,15 +2,14 @@ package doom;
 
 //
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 // INTERMISSION
 // Structure passed e.g. to WI_Start(wb)
 //
 public class wbplayerstruct_t implements Cloneable {
 
-    private static final Logger LOGGER = Loggers.getLogger(wbplayerstruct_t.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(wbplayerstruct_t.class.getName());
 
     public wbplayerstruct_t() {
         frags = new int[4];

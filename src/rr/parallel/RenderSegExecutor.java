@@ -6,10 +6,10 @@ import doom.DoomMain;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FixedMul;
-import mochadoom.Loggers;
+
 import rr.IDetailAware;
 import rr.TextureManager;
 import rr.drawfuns.ColVars;
@@ -45,7 +45,7 @@ import v.tables.LightsAndColors;
  */
 public abstract class RenderSegExecutor<T, V> implements Runnable, IDetailAware {
 
-    private static final Logger LOGGER = Loggers.getLogger(RenderSegExecutor.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RenderSegExecutor.class.getName());
 
     // This needs to be set by the partitioner.
     protected int rw_start, rw_end, rsiend;

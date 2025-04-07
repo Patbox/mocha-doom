@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import mochadoom.SystemHandler;
 import utils.ResourceIO;
 
@@ -41,7 +40,7 @@ import utils.ResourceIO;
  */
 public class CVarManager {
 
-    private static final Logger LOGGER = Loggers.getLogger(CVarManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CVarManager.class.getName());
 
     private final EnumMap<CommandVariable, Object[]> cVarMap = new EnumMap<>(CommandVariable.class);
 

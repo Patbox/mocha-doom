@@ -7,9 +7,9 @@ import static data.Tables.finecosine;
 import static data.Tables.finesine;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FixedDiv;
-import mochadoom.Loggers;
+
 import utils.C2JUtils;
 import v.scale.VideoScale;
 
@@ -19,7 +19,7 @@ import v.scale.VideoScale;
  */
 public class Visplanes {
 
-    private static final Logger LOGGER = Loggers.getLogger(Visplanes.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Visplanes.class.getName());
 
     private static final boolean DEBUG2 = false;
 

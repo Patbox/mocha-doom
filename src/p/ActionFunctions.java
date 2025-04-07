@@ -25,8 +25,7 @@ import doom.player_t;
 import hu.IHeadsUp;
 import i.IDoomSystem;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import p.Actions.ActionsAttacks;
 import p.Actions.ActionsEnemies;
 import p.Actions.ActionsThinkers;
@@ -43,7 +42,7 @@ import utils.TraitFactory.SharedContext;
 public class ActionFunctions extends UnifiedGameMap implements
         ActionsThinkers, ActionsEnemies, ActionsAttacks, Ai, Attacks, Thinkers, Weapons {
 
-    private static final Logger LOGGER = Loggers.getLogger(ActionFunctions.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ActionFunctions.class.getName());
 
     private final SharedContext traitsSharedContext;
 

@@ -29,9 +29,8 @@ import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.Swap;
-import mochadoom.Loggers;
 
 /**
  * An extension of RandomAccessFile, which handles readString/WriteString specially
@@ -51,7 +50,7 @@ import mochadoom.Loggers;
  */
 public class DoomIO {
 
-    private static final Logger LOGGER = Loggers.getLogger(DoomIO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomIO.class.getName());
 
     private DoomIO() {
 

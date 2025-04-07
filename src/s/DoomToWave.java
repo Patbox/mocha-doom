@@ -7,13 +7,12 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import utils.C2JUtils;
 
 public class DoomToWave {
 
-    private static final Logger LOGGER = Loggers.getLogger(DoomToWave.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomToWave.class.getName());
 
     static int MEMORYCACHE = 0x8000;
 

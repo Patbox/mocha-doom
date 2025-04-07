@@ -25,12 +25,12 @@ import defines.statenum_t;
 import doom.SourceCode.P_Map;
 import static doom.SourceCode.P_Map.PIT_ChangeSector;
 import doom.SourceCode.fixed_t;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.BBox.BOXBOTTOM;
 import static m.BBox.BOXLEFT;
 import static m.BBox.BOXRIGHT;
 import static m.BBox.BOXTOP;
-import mochadoom.Loggers;
+
 import p.AbstractLevelLoader;
 import p.ActiveStates;
 import p.divline_t;
@@ -79,7 +79,7 @@ public interface ActionsSectors extends ActionsLights, ActionsFloors, ActionsDoo
 
     final class Spawn {
 
-        final static Logger LOGGER = Loggers.getLogger(ActionsSectors.class.getName());
+        final static Logger LOGGER = Logger.getLogger(ActionsSectors.class.getName());
 
         /**
          * who got hit (or NULL)

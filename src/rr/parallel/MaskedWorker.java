@@ -6,11 +6,10 @@ import static data.Defines.pw_invisibility;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FRACUNIT;
 import static m.fixed_t.FixedMul;
-import mochadoom.Loggers;
 import static p.mobj_t.MF_TRANSLATION;
 import p.pspdef_t;
 import rr.AbstractThings;
@@ -46,7 +45,7 @@ import v.tables.BlurryTable;
  */
 public abstract class MaskedWorker<T, V> extends AbstractThings<T, V> implements Runnable, IDetailAware {
 
-    private static final Logger LOGGER = Loggers.getLogger(MaskedWorker.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MaskedWorker.class.getName());
 
     private final static boolean DEBUG = false;
     private final static boolean RANGECHECK = false;

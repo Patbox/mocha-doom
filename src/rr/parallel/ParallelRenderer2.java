@@ -8,8 +8,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.drawfuns.R_DrawColumnBoom;
 import rr.drawfuns.R_DrawColumnBoomLow;
 import rr.drawfuns.R_DrawColumnBoomOpt;
@@ -33,7 +32,7 @@ import static utils.GenericCopy.malloc;
  */
 public abstract class ParallelRenderer2<T, V> extends AbstractParallelRenderer<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(ParallelRenderer2.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ParallelRenderer2.class.getName());
 
     @SuppressWarnings("unchecked")
     public ParallelRenderer2(DoomMain<T, V> DOOM, int wallthread, int floorthreads, int nummaskedthreads) {

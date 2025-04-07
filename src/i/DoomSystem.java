@@ -105,18 +105,16 @@
 //-----------------------------------------------------------------------------
 package i;
 
-import awt.MsgBox;
 import doom.DoomMain;
 import doom.ticcmd_t;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import mochadoom.SystemHandler;
 
 public class DoomSystem implements IDoomSystem {
 
-    private static final Logger LOGGER = Loggers.getLogger(DoomSystem.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomSystem.class.getName());
 
     public static void MiscError(String error, Object... args) {
         LOGGER.log(Level.SEVERE, String.format("Error: %s", error));

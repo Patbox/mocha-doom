@@ -2,9 +2,8 @@ package rr.drawfuns;
 
 import i.IDoomSystem;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
-import mochadoom.Loggers;
 
 /**
  * Adapted from Killough's Boom code. There are optimized as well as low-detail
@@ -15,7 +14,7 @@ import mochadoom.Loggers;
 public abstract class R_DrawColumnBoom<T, V>
         extends DoomColumnFunction<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(R_DrawColumnBoom.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(R_DrawColumnBoom.class.getName());
 
     public R_DrawColumnBoom(int SCREENWIDTH, int SCREENHEIGHT, int[] ylookup,
             int[] columnofs, ColVars<T, V> dcvars, V screen, IDoomSystem I) {

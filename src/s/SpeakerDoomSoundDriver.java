@@ -2,8 +2,7 @@ package s;
 
 import doom.DoomMain;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 /** A variation of the Classic Sound Driver, decoding the DP-lumps
  *  instead of the DS. A better way would be to build-in an
@@ -14,7 +13,7 @@ import mochadoom.Loggers;
  */
 public class SpeakerDoomSoundDriver extends ClassicDoomSoundDriver {
 
-    private static final Logger LOGGER = Loggers.getLogger(SpeakerDoomSoundDriver.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SpeakerDoomSoundDriver.class.getName());
 
     public SpeakerDoomSoundDriver(DoomMain<?, ?> DM, int numChannels) {
         super(DM, numChannels);

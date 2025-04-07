@@ -5,8 +5,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.AbstractThings;
 import rr.IDetailAware;
 import rr.SceneRenderer;
@@ -40,7 +39,7 @@ import v.tables.BlurryTable;
  */
 public abstract class ParallelThings<T, V> extends AbstractThings<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(ParallelThings.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ParallelThings.class.getName());
 
     // stuff to get from container
     /** Render Masked Instuction subsystem. Essentially, a way to split sprite work

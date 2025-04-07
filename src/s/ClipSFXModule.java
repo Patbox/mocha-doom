@@ -6,14 +6,13 @@ import doom.DoomMain;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.FloatControl.Type;
 import javax.sound.sampled.LineUnavailableException;
-import mochadoom.Loggers;
 
 /** Experimental Clip based driver. It does work, but it has no
  *  tangible advantages over the Audioline or Classic one. If the
@@ -36,7 +35,7 @@ import mochadoom.Loggers;
  */
 public class ClipSFXModule extends AbstractSoundDriver {
 
-    private static final Logger LOGGER = Loggers.getLogger(ClipSFXModule.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ClipSFXModule.class.getName());
 
     HashMap<Integer, Clip> cachedSounds = new HashMap<>();
 

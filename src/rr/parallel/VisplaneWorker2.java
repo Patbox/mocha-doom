@@ -6,9 +6,9 @@ import doom.DoomMain;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
-import mochadoom.Loggers;
+
 import rr.IDetailAware;
 import rr.PlaneDrawer;
 import rr.SceneRenderer;
@@ -35,7 +35,7 @@ import v.graphics.Palettes;
  */
 public abstract class VisplaneWorker2<T, V> extends PlaneDrawer<T, V> implements Runnable, IDetailAware {
 
-    private static final Logger LOGGER = Loggers.getLogger(VisplaneWorker2.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(VisplaneWorker2.class.getName());
 
     protected final int id;
     protected final int NUMFLOORTHREADS;

@@ -34,11 +34,10 @@ import i.Strings;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Engine {
 
-    private static final Logger LOGGER = Loggers.getLogger(Engine.class.getName());
+    private static final Logger LOGGER = DefaultLoggers.getLoggerWrapped(Engine.class.getName());
 
     private static volatile Engine instance;
 

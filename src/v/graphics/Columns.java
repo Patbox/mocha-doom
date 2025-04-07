@@ -20,11 +20,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.IntConsumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import java.util.stream.IntStream;
 import m.Settings;
-import mochadoom.Engine;
-import mochadoom.Loggers;
 import mochadoom.SystemHandler;
 import rr.column_t;
 import rr.patch_t;
@@ -38,7 +36,7 @@ import rr.patch_t;
  */
 public interface Columns<V, E extends Enum<E>> extends Blocks<V, E> {
 
-    static final Logger LOGGER = Loggers.getLogger(Columns.class.getName());
+    static final Logger LOGGER = Logger.getLogger(Columns.class.getName());
 
     /**
      * We have to draw columns to the screen, not rows and is ineffective performance-wise because

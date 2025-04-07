@@ -25,8 +25,7 @@ import doom.SourceCode.actionf_v;
 import doom.player_t;
 import doom.thinker_t;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 /**
  * In vanilla doom there is union called actionf_t that can hold
@@ -171,7 +170,7 @@ public enum ActiveStates implements ThinkerStates {
     T_PlatRaise(ActionFunctions::T_PlatRaise, ThinkerConsumer.class),
     T_SlidingDoor(ActionFunctions::T_SlidingDoor, ThinkerConsumer.class);
 
-    private final static Logger LOGGER = Loggers.getLogger(ActiveStates.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(ActiveStates.class.getName());
 
     private final ParamClass<?> actionFunction;
     private final Class<? extends ParamClass<?>> paramType;

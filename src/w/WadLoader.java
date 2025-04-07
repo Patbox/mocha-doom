@@ -32,7 +32,6 @@ import i.Strings;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -41,10 +40,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import mochadoom.Loggers;
+
 import mochadoom.SystemHandler;
 import rr.patch_t;
 import utils.C2JUtils;
@@ -53,7 +52,7 @@ import static utils.GenericCopy.malloc;
 
 public class WadLoader implements IWadLoader {
 
-    private static final Logger LOGGER = Loggers.getLogger(WadLoader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WadLoader.class.getName());
 
     protected IDoomSystem I;
 

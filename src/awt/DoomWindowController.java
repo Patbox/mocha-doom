@@ -26,10 +26,8 @@ import java.awt.Toolkit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.Settings;
-import mochadoom.Engine;
-import mochadoom.Loggers;
 import mochadoom.SystemHandler;
 
 /**
@@ -39,7 +37,7 @@ import mochadoom.SystemHandler;
  */
 public class DoomWindowController<E extends Component & DoomWindow<E>, H extends Enum<H> & EventBase<H>> implements FullscreenOptions {
 
-    private static final Logger LOGGER = Loggers.getLogger(DoomWindow.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomWindow.class.getName());
 
     private static final long ALL_EVENTS_MASK = 0xFFFF_FFFF_FFFF_FFFFL;
 

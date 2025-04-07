@@ -3,8 +3,7 @@ package pooling;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import p.mobj_t;
 
 /** A convenient object pooling class. Currently used for AudioChunks, but
@@ -14,7 +13,7 @@ import p.mobj_t;
  */
 public abstract class ObjectPool<K> {
 
-    private static final Logger LOGGER = Loggers.getLogger(ObjectPool.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ObjectPool.class.getName());
 
     private static final boolean D = false;
 

@@ -9,10 +9,10 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FixedMul;
-import mochadoom.Loggers;
+
 import rr.PlaneDrawer;
 import rr.RendererState;
 import rr.SceneRenderer;
@@ -26,7 +26,7 @@ import utils.C2JUtils;
  */
 public abstract class AbstractParallelRenderer<T, V> extends RendererState<T, V> implements RWI.Init<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(AbstractParallelRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractParallelRenderer.class.getName());
 
     public AbstractParallelRenderer(DoomMain<T, V> DM, int wallthread, int floorthreads, int nummaskedthreads) {
         super(DM);

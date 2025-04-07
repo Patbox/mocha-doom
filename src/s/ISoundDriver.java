@@ -3,11 +3,8 @@ package s;
 import data.sfxinfo_t;
 import data.sounds.sfxenum_t;
 import doom.CVarManager;
-import doom.CommandVariable;
 import doom.DoomMain;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import mochadoom.SystemHandler;
 
 //Emacs style mode select   -*- Java -*-
@@ -35,7 +32,7 @@ import mochadoom.SystemHandler;
 //-----------------------------------------------------------------------------
 public interface ISoundDriver {
 
-    static final Logger LOGGER = Loggers.getLogger(ISoundDriver.class.getName());
+    static final Logger LOGGER = Logger.getLogger(ISoundDriver.class.getName());
 
     public static final int VOLUME_STEPS = 128;
     public static final int PANNING_STEPS = 256;

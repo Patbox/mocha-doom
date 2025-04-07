@@ -1,12 +1,11 @@
 package w;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 public class JadDecompress {
 
-    private static final Logger LOGGER = Loggers.getLogger(JadDecompress.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JadDecompress.class.getName());
 
     public final static int WINDOW_SIZE = 4096;
 

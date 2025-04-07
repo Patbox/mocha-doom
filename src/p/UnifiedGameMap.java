@@ -15,11 +15,10 @@ import static doom.SourceCode.P_Tick.P_InitThinkers;
 import doom.thinker_t;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.Settings;
 import static m.fixed_t.MAPFRACUNIT;
-import mochadoom.Engine;
-import mochadoom.Loggers;
+
 import mochadoom.SystemHandler;
 import rr.ISpriteManager;
 import rr.line_t;
@@ -30,7 +29,7 @@ import static utils.GenericCopy.malloc;
 // // FROM SIGHT
 public abstract class UnifiedGameMap implements ThinkerList {
 
-    private static final Logger LOGGER = Loggers.getLogger(UnifiedGameMap.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UnifiedGameMap.class.getName());
 
     /**
      * killough's code for thinkers seems to be totally broken in M.D,

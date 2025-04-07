@@ -5,8 +5,7 @@ import data.sounds;
 import static data.sounds.S_sfx;
 import doom.DoomMain;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 /**
  * Functionality and fields that are common among the various "sound drivers"
@@ -16,7 +15,7 @@ import mochadoom.Loggers;
  */
 public abstract class AbstractSoundDriver implements ISoundDriver {
 
-    private static final Logger LOGGER = Loggers.getLogger(AbstractSoundDriver.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractSoundDriver.class.getName());
 
     protected final static boolean D = false; // debug
 

@@ -26,8 +26,7 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.VolatileImage;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import v.tables.BlurryTable;
 import v.tables.ColorTint;
 import static v.tables.ColorTint.GREY_TINTS;
@@ -44,7 +43,7 @@ import static v.tables.ColorTint.NORMAL_TINTS;
  */
 class BufferedRenderer32 extends SoftwareParallelVideoRenderer<byte[], int[]> {
 
-    private static final Logger LOGGER = Loggers.getLogger(BufferedRenderer32.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BufferedRenderer32.class.getName());
 
     protected final int[] raster;
 

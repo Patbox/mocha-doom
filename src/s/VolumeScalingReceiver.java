@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
@@ -18,7 +18,6 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
-import mochadoom.Loggers;
 
 /** A {@link Receiver} that scales channel volumes.
  *
@@ -31,7 +30,7 @@ import mochadoom.Loggers;
  */
 public class VolumeScalingReceiver implements Receiver {
 
-    private static final Logger LOGGER = Loggers.getLogger(VolumeScalingReceiver.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(VolumeScalingReceiver.class.getName());
 
     /** Guess which is the "best" available synthesizer & create a
      *  VolumeScalingReceiver that forwards to it.

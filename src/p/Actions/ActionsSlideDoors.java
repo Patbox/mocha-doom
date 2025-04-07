@@ -2,8 +2,7 @@ package p.Actions;
 
 import doom.thinker_t;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import p.AbstractLevelLoader;
 import static p.ActiveStates.T_SlidingDoor;
 import p.mobj_t;
@@ -21,7 +20,7 @@ import utils.TraitFactory.ContextKey;
 
 public interface ActionsSlideDoors extends ActionTrait {
 
-    static final Logger LOGGER = Loggers.getLogger(ActionsSlideDoors.class.getName());
+    static final Logger LOGGER = Logger.getLogger(ActionsSlideDoors.class.getName());
 
     ContextKey<SlideDoors> KEY_SLIDEDOORS = ACTION_KEY_CHAIN.newKey(ActionsSlideDoors.class, SlideDoors::new);
 

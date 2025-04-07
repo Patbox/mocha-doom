@@ -4,8 +4,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.IMaskedDrawer;
 import rr.ISpriteManager;
 import rr.IVisSpriteManagement;
@@ -32,7 +31,7 @@ import v.scale.VideoScale;
  */
 public final class ParallelThings2<T, V> implements IMaskedDrawer<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(ParallelThings2.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ParallelThings2.class.getName());
 
     MaskedWorker<T, V>[] maskedworkers;
     CyclicBarrier maskedbarrier;

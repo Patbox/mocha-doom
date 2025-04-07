@@ -6,14 +6,13 @@ import doom.DoomMain;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.FloatControl.Type;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-import mochadoom.Loggers;
 
 /** David Martel's sound driver for Mocha Doom. Excellent work!
  *
@@ -36,7 +35,7 @@ import mochadoom.Loggers;
  */
 public class DavidSFXModule extends AbstractSoundDriver {
 
-    private static final Logger LOGGER = Loggers.getLogger(DavidSFXModule.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DavidSFXModule.class.getName());
 
     ArrayList<DoomSound> cachedSounds = new ArrayList<>();
 

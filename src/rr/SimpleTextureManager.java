@@ -17,10 +17,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FRACUNIT;
-import mochadoom.Loggers;
+
 import p.AbstractLevelLoader;
 import w.DoomBuffer;
 import w.IWadLoader;
@@ -37,7 +37,7 @@ import w.lumpinfo_t;
  */
 public class SimpleTextureManager implements TextureManager<byte[]> {
 
-    private static final Logger LOGGER = Loggers.getLogger(SimpleTextureManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SimpleTextureManager.class.getName());
 
     IWadLoader W;
     IDoomSystem I;

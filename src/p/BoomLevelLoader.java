@@ -35,7 +35,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.BBox;
 import static m.BBox.BOXBOTTOM;
 import static m.BBox.BOXLEFT;
@@ -44,7 +44,7 @@ import static m.BBox.BOXTOP;
 import m.fixed_t;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FRACUNIT;
-import mochadoom.Loggers;
+
 import rr.RendererState;
 import rr.line_t;
 import static rr.line_t.ML_TWOSIDED;
@@ -93,7 +93,7 @@ import w.wadfile_info_t;
  */
 public class BoomLevelLoader extends AbstractLevelLoader {
 
-    private static final Logger LOGGER = Loggers.getLogger(BoomLevelLoader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BoomLevelLoader.class.getName());
 
     public BoomLevelLoader(DoomMain<?, ?> DM) {
         super(DM);

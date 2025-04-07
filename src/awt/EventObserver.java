@@ -42,8 +42,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+
+import mochadoom.DefaultLoggers;
+import mochadoom.Logger;
 
 /**
  * Observer for AWTEvents.The description would be short in contrary to the description
@@ -61,7 +62,7 @@ import mochadoom.Loggers;
 public class EventObserver<Handler extends Enum<Handler> & EventBase<Handler>> {
 
     static final Optional<Robot> MOUSE_ROBOT = createRobot();
-    private static final Logger LOGGER = Loggers.getLogger(EventObserver.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EventObserver.class.getName());
 
     /**
      * The Robot does not necessary gets created. When not, it throws an exception.
@@ -185,7 +186,7 @@ public class EventObserver<Handler extends Enum<Handler> & EventBase<Handler>> {
         }
 
         // In case of debug. If level > FINE (most of cases) it will not affect anything
-        Loggers.LogEvent(LOGGER, actionStateHolder, handler, ev);
+        DefaultLoggers.LogEvent(LOGGER, actionStateHolder, handler, ev);
 
         actionStateHolder.run(handler, ActionMode.PERFORM, ev);
         actionStateHolder.adjustments(handler).forEach((relation, affected) -> {

@@ -23,8 +23,7 @@ import static doom.SourceCode.M_Random.M_ClearRandom;
 import static doom.SourceCode.M_Random.M_Random;
 import static doom.SourceCode.M_Random.P_Random;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import p.ActiveStates;
 import utils.C2JUtils;
 
@@ -45,7 +44,7 @@ import utils.C2JUtils;
  */
 public class DelegateRandom implements IRandom {
 
-    private static final Logger LOGGER = Loggers.getLogger(DelegateRandom.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DelegateRandom.class.getName());
 
     private IRandom random;
     private IRandom altRandom;

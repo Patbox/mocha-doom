@@ -17,7 +17,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -416,5 +415,10 @@ public record DefaultSystemHandler() implements SystemHandler.Impl {
     public boolean generateAlert(String title, String cause, boolean showCancelButton) {
         MsgBox alert = new MsgBox(null, title, cause, showCancelButton);
         return alert.isOk();
+    }
+
+    @Override
+    public Logger getLogger(String className) {
+        return DefaultLoggers.getLoggerWrapped(className);
     }
 }

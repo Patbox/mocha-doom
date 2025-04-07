@@ -43,7 +43,7 @@ distributions {
         contents {
             from jar
             from sourcesJar
-            from 'wads'
+            from 'wads/doomshareware'
             from('scripts') {
                 include 'mochadoom*.sh'
                 filter(FixCrLfFilter, eol: FixCrLfFilter.CrLf.newInstance('unix'))

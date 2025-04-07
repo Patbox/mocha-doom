@@ -15,12 +15,11 @@ import doom.SourceCode.R_Main;
 import static doom.SourceCode.R_Main.R_PointInSubsector;
 import doom.SourceCode.fixed_t;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.BBox;
 import m.Settings;
 import static m.fixed_t.FRACBITS;
-import mochadoom.Engine;
-import mochadoom.Loggers;
+
 import static p.mobj_t.MF_NOBLOCKMAP;
 import static p.mobj_t.MF_NOSECTOR;
 
@@ -47,7 +46,7 @@ import static utils.C2JUtils.flags;
  */
 public abstract class AbstractLevelLoader implements ILevelLoader {
 
-    private static final Logger LOGGER = Loggers.getLogger(AbstractLevelLoader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractLevelLoader.class.getName());
 
     // ///////////////// Status objects ///////////////////
     final DoomMain<?, ?> DOOM;

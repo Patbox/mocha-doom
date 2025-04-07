@@ -18,18 +18,13 @@ package utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.OpenOption;
-import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import mochadoom.SystemHandler;
 
 /**
@@ -39,7 +34,7 @@ import mochadoom.SystemHandler;
  */
 public class ResourceIO {
 
-    private static final Logger LOGGER = Loggers.getLogger(ResourceIO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResourceIO.class.getName());
 
     private final String file;
     private final Charset charset = Charset.forName("US-ASCII");

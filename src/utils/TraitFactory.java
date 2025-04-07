@@ -25,8 +25,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import java.util.logging.Level;
+
+import mochadoom.Logger;
 
 /**
  * Purpose of this pattern-interface: store Trait-specific class-wise context objects
@@ -95,7 +96,7 @@ import mochadoom.Loggers;
  */
 public class TraitFactory {
 
-    private final static Logger LOGGER = Loggers.getLogger(TraitFactory.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(TraitFactory.class.getName());
 
     public static <T extends Trait> SharedContext build(T traitUser, KeyChain usedChain)
             throws IllegalArgumentException, IllegalAccessException {
@@ -120,7 +121,7 @@ public class TraitFactory {
                     if (fieldClass == ContextKey.class) {
                         final ContextKey<?> key = ContextKey.class.cast(f.get(null));
                         c.put(key, key.contextConstructor);
-                        LOGGER.fine(() -> String.format("%s for %s", c.get(key).getClass(), f.getDeclaringClass()));
+                        LOGGER.log(Level.FINE, () -> String.format("%s for %s", c.get(key).getClass(), f.getDeclaringClass()));
                     }
                 }
             }
@@ -232,7 +233,7 @@ public class TraitFactory {
                 if (key.preferredId >= 0 && key.preferredId < keys.length) {
                     // return in the case of duplicate initialization of trait
                     if (keys[key.preferredId] == key) {
-                        LOGGER.finer(() -> "Already found, skipping: " + key);
+                        LOGGER.log(Level.FINER, () -> "Already found, skipping: " + key);
                         return;
                     } else if (keys[key.preferredId] == null) {
                         keys[key.preferredId] = key;

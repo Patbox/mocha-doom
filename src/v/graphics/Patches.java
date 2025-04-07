@@ -17,8 +17,7 @@
 package v.graphics;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.patch_t;
 import utils.C2JUtils;
 import static v.DoomGraphicSystem.V_FLIPPEDPATCH;
@@ -57,7 +56,7 @@ import v.scale.VideoScale;
  */
 public interface Patches<V, E extends Enum<E>> extends Columns<V, E> {
 
-    static final Logger LOGGER = Loggers.getLogger(Patches.class.getName());
+    static final Logger LOGGER = Logger.getLogger(Patches.class.getName());
 
     /**
      * V_DrawPatch

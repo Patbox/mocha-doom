@@ -21,7 +21,7 @@ import doom.DoomMain;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 
 import doom.MapId;
 import m.BBox;
@@ -31,7 +31,7 @@ import static m.BBox.BOXRIGHT;
 import static m.BBox.BOXTOP;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FixedDiv;
-import mochadoom.Loggers;
+
 import rr.line_t;
 import static rr.line_t.ML_TWOSIDED;
 import rr.node_t;
@@ -69,7 +69,7 @@ import w.DoomBuffer;
 //-----------------------------------------------------------------------------
 public class LevelLoader extends AbstractLevelLoader {
 
-    private static final Logger LOGGER = Loggers.getLogger(LevelLoader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LevelLoader.class.getName());
 
     public static final String rcsid = "$Id: LevelLoader.java,v 1.44 2012/09/24 17:16:23 velktron Exp $";
 

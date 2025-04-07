@@ -8,18 +8,14 @@ import java.awt.image.DataBufferUShort;
 import java.awt.image.IndexColorModel;
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.imageio.ImageIO;
-import mochadoom.Loggers;
+
 import mochadoom.SystemHandler;
 import w.IWritableDoomObject;
 
@@ -49,7 +45,7 @@ import w.IWritableDoomObject;
 //-----------------------------------------------------------------------------
 public abstract class MenuMisc {
 
-    private static final Logger LOGGER = Loggers.getLogger(MenuMisc.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MenuMisc.class.getName());
 
     public static final String rcsid = "$Id: MenuMisc.java,v 1.29 2012/09/24 17:16:22 velktron Exp $";
 

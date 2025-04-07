@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
-import mochadoom.Loggers;
+
 import pooling.AudioChunkPool;
 
 /**
@@ -31,7 +31,7 @@ import pooling.AudioChunkPool;
  */
 public class ClassicDoomSoundDriver extends AbstractSoundDriver {
 
-    private static final Logger LOGGER = Loggers.getLogger(ClassicDoomSoundDriver.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ClassicDoomSoundDriver.class.getName());
 
     protected final Semaphore produce;
 

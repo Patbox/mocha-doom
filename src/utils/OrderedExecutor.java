@@ -8,8 +8,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 /**
  * An executor that make sure tasks submitted with the same key
@@ -28,7 +27,7 @@ import mochadoom.Loggers;
  */
 public class OrderedExecutor<K> {
 
-    private static final Logger LOGGER = Loggers.getLogger(OrderedExecutor.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrderedExecutor.class.getName());
 
     private final Executor executor;
     private final Map<K, Task> tasks;

@@ -2,8 +2,7 @@ package pooling;
 
 import java.util.Stack;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import p.mobj_t;
 
 /** A convenient object pooling class, derived from the stock ObjectPool.
@@ -14,7 +13,7 @@ import p.mobj_t;
  */
 public abstract class ObjectQueuePool<K> {
 
-    private static final Logger LOGGER = Loggers.getLogger(ObjectQueuePool.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ObjectQueuePool.class.getName());
 
     private static final boolean D = false;
 

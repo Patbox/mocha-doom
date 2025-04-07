@@ -17,8 +17,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import w.DoomBuffer;
 
 // Emacs style mode select   -*- Java -*-
@@ -66,7 +65,7 @@ import w.DoomBuffer;
 //-----------------------------------------------------------------------------
 public class BasicNetworkInterface implements DoomSystemNetworking {
 
-    static final Logger LOGGER = Loggers.getLogger(BasicNetworkInterface.class.getName());
+    static final Logger LOGGER = Logger.getLogger(BasicNetworkInterface.class.getName());
 
     protected DoomMain<?, ?> DOOM;
 

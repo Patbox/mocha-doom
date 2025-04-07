@@ -25,20 +25,21 @@ import doom.CVarManager;
 import doom.ConfigManager;
 import doom.DoomMain;
 import i.DoomSystem;
-import java.awt.AWTEvent;
+import p.ActiveStates;
+import v.graphics.Patches;
+
+import java.awt.*;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import p.ActiveStates;
-import v.graphics.Patches;
 
 /**
  * Facility to manage Logger Levels for different classes
@@ -46,16 +47,16 @@ import v.graphics.Patches;
  *
  * @author Good Sign
  */
-public class Loggers {
+public class DefaultLoggers {
 
     private static final Level DEFAULT_LEVEL = Level.WARNING;
 
-    private static final Map<Level, Logger> PARENT_LOGGERS_MAP = Stream.of(
+    private static final Map<Level, java.util.logging.Logger> PARENT_LOGGERS_MAP = Stream.of(
             Level.FINE, Level.FINER, Level.FINEST, Level.INFO, Level.SEVERE, Level.WARNING
-    ).collect(Collectors.toMap(l -> l, Loggers::newLoggerHandlingLevel));
+    ).collect(Collectors.toMap(l -> l, DefaultLoggers::newLoggerHandlingLevel));
 
-    private static final Logger DEFAULT_LOGGER = PARENT_LOGGERS_MAP.get(DEFAULT_LEVEL);
-    private static final HashMap<String, Logger> INDIVIDUAL_CLASS_LOGGERS = new HashMap<>();
+    private static final java.util.logging.Logger DEFAULT_LOGGER = PARENT_LOGGERS_MAP.get(DEFAULT_LEVEL);
+    private static final HashMap<String, java.util.logging.Logger> INDIVIDUAL_CLASS_LOGGERS = new HashMap<>();
 
     static {
         //INDIVIDUAL_CLASS_LOGGERS.put(EventObserver.class.getName(), PARENT_LOGGERS_MAP.get(Level.FINE));
@@ -70,8 +71,8 @@ public class Loggers {
         INDIVIDUAL_CLASS_LOGGERS.put(Engine.class.getName(), PARENT_LOGGERS_MAP.get(Level.INFO));
     }
 
-    public static Logger getLogger(final String className) {
-        final Logger ret = Logger.getLogger(className);
+    public static java.util.logging.Logger getLogger(final String className) {
+        final var ret = java.util.logging.Logger.getLogger(className);
         ret.setParent(INDIVIDUAL_CLASS_LOGGERS.getOrDefault(className, DEFAULT_LOGGER));
 
         return ret;
@@ -141,17 +142,21 @@ public class Loggers {
         }
     }
 
-    private Loggers() {
+    private DefaultLoggers() {
     }
 
-    private static Logger newLoggerHandlingLevel(final Level l) {
+    private static java.util.logging.Logger newLoggerHandlingLevel(final Level l) {
         final OutHandler h = new OutHandler();
         h.setLevel(l);
-        final Logger ret = Logger.getAnonymousLogger();
+        final var ret = java.util.logging.Logger.getAnonymousLogger();
         ret.setUseParentHandlers(false);
         ret.setLevel(l);
         ret.addHandler(h);
         return ret;
+    }
+
+    public static Logger getLoggerWrapped(String className) {
+        return new WrappedLogger(getLogger(className));
     }
 
     private static final class OutHandler extends ConsoleHandler {
@@ -160,6 +165,38 @@ public class Loggers {
         @SuppressWarnings("UseOfSystemOutOrSystemErr")
         protected synchronized void setOutputStream(final OutputStream out) throws SecurityException {
             super.setOutputStream(System.out);
+        }
+    }
+
+    public record WrappedLogger(java.util.logging.Logger logger) implements Logger {
+        @Override
+        public boolean isLoggable(Level level) {
+            return logger.isLoggable(level);
+        }
+
+        @Override
+        public void log(Level level, String text) {
+            logger.log(level, text);
+        }
+
+        @Override
+        public void log(Level level, Supplier<String> text) {
+            logger.log(level, text);
+        }
+
+        @Override
+        public void log(Level level, String text, Throwable e) {
+            logger.log(level, text, e);
+        }
+
+        @Override
+        public void log(Level level, String text, Object... objects) {
+            logger.log(level, text, objects);
+        }
+
+        @Override
+        public void log(Level level, Throwable e, Supplier<String> text) {
+            logger.log(level, e, text);
         }
     }
 }

@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.BBox.BOXBOTTOM;
 import static m.BBox.BOXLEFT;
 import static m.BBox.BOXRIGHT;
@@ -49,8 +49,7 @@ import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FRACUNIT;
 import static m.fixed_t.FixedDiv;
 import static m.fixed_t.FixedMul;
-import mochadoom.Engine;
-import mochadoom.Loggers;
+
 import static p.ActiveStates.P_MobjThinker;
 
 import mochadoom.SystemHandler;
@@ -89,7 +88,7 @@ import w.IWadLoader;
  */
 public abstract class RendererState<T, V> implements SceneRenderer<T, V>, ILimitResettable {
 
-    private static final Logger LOGGER = Loggers.getLogger(RendererState.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RendererState.class.getName());
 
     protected static final boolean DEBUG = false;
     protected static final boolean DEBUG2 = false;

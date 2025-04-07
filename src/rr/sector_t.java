@@ -10,11 +10,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.IRandom;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FRACUNIT;
-import mochadoom.Loggers;
+
 import p.Resettable;
 import p.ThinkerList;
 import p.mobj_t;
@@ -32,7 +32,7 @@ import w.IReadableDoomObject;
  */
 public class sector_t implements IReadableDoomObject, IPackableDoomObject, Resettable {
 
-    private static final Logger LOGGER = Loggers.getLogger(sector_t.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(sector_t.class.getName());
 
     public ThinkerList TL;
 

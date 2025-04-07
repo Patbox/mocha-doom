@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,15 @@ public class ThingsMap {
     }
 
     static {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ThingsMap.class.getClassLoader().getResourceAsStream("thingtypes.txt")))) {
+        var stream = ThingsMap.class.getClassLoader().getResourceAsStream("thingtypes.txt");
+        if (stream == null) {
+            try {
+                stream = Files.newInputStream(Paths.get("src", "thingtypes.txt"));
+            } catch (IOException e) {
+
+            }
+        }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
             int i = 0;
             for (;;) {
                 String line = reader.readLine();
@@ -30,7 +39,7 @@ public class ThingsMap {
                 MAP.put(line,mobjtype_t.values()[i]);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }

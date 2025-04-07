@@ -39,13 +39,12 @@
 package i;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import mochadoom.SystemHandler;
 
 public class system {
 
-    private static final Logger LOGGER = Loggers.getLogger(system.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(system.class.getName());
 
     /*
 #include <stdlib.h>

@@ -132,13 +132,12 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import java.util.stream.Collectors;
 import m.DelegateRandom;
 import m.IDoomMenu;
@@ -150,8 +149,6 @@ import static m.fixed_t.MAPFRACUNIT;
 
 import mapinfo.MapEntry;
 import mapinfo.UMAPINFO;
-import mochadoom.Engine;
-import mochadoom.Loggers;
 import mochadoom.SystemHandler;
 import timing.GameTick;
 import timing.RemoteTicker;
@@ -229,7 +226,7 @@ import w.WadLoader;
     "StringBufferMayBeStringBuilder"
 })
 public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetworking, IDoomGame, IDoom {
-    private static final Logger LOGGER = Loggers.getLogger(DoomMain.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomMain.class.getName());
 
     public static final String RCSID = "$Id: DoomMain.java,v 1.109 2012/11/06 16:04:58 velktron Exp $";
 

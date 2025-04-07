@@ -20,8 +20,7 @@ import doom.CVarManager;
 import doom.CommandVariable;
 import doom.DoomMain;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import utils.C2JUtils;
 import static utils.C2JUtils.testReadAccess;
 
@@ -45,7 +44,7 @@ public enum DoomVersion {
         this.wadFileName = wadFileName;
     }
 
-    private static final Logger LOGGER = Loggers.getLogger(DoomVersion.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomVersion.class.getName());
 
     /**
      * Try all versions in given doomwaddir

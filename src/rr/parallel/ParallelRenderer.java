@@ -4,8 +4,7 @@ import doom.DoomMain;
 import doom.player_t;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.SimpleThings;
 import rr.drawfuns.ColVars;
 import rr.drawfuns.R_DrawColumnBoom;
@@ -35,7 +34,7 @@ import rr.drawfuns.R_DrawTranslatedColumnLow;
  */
 public abstract class ParallelRenderer<T, V> extends AbstractParallelRenderer<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(ParallelRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ParallelRenderer.class.getName());
 
     public ParallelRenderer(DoomMain<T, V> DM, int wallthread,
             int floorthreads, int nummaskedthreads) {

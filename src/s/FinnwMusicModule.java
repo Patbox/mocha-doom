@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiEvent;
@@ -34,7 +34,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
-import mochadoom.Loggers;
 
 /** A music driver that bypasses Sequences and sends events from a MUS lump
  *  directly to a MIDI device.
@@ -55,7 +54,7 @@ import mochadoom.Loggers;
  */
 public class FinnwMusicModule implements IMusic {
 
-    private static final Logger LOGGER = Loggers.getLogger(FinnwMusicModule.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FinnwMusicModule.class.getName());
 
     public FinnwMusicModule() {
         this.lock = new ReentrantLock();

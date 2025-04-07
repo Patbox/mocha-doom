@@ -23,11 +23,10 @@ import static data.Limits.PLATWAIT;
 import data.sounds;
 import doom.thinker_t;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import m.Settings;
 import static m.fixed_t.FRACUNIT;
-import mochadoom.Engine;
-import mochadoom.Loggers;
+
 import mochadoom.SystemHandler;
 import p.AbstractLevelLoader;
 import static p.ActiveStates.NOP;
@@ -50,7 +49,7 @@ public interface ActionsPlats extends ActionsMoveEvents, ActionsUseEvents {
 
     final class Plats {
 
-        static final Logger LOGGER = Loggers.getLogger(ActionsPlats.class.getName());
+        static final Logger LOGGER = Logger.getLogger(ActionsPlats.class.getName());
 
         // activeplats is just a placeholder. Plat objects aren't
         // actually reused, so we don't need an initialized array.

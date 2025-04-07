@@ -3,8 +3,7 @@ package rr;
 import doom.DoomMain;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.drawfuns.R_DrawColumnBoom;
 import rr.drawfuns.R_DrawColumnBoomLow;
 import rr.drawfuns.R_DrawColumnBoomOpt;
@@ -19,7 +18,7 @@ import rr.drawfuns.R_DrawTranslatedColumnLow;
 
 public abstract class UnifiedRenderer<T, V> extends RendererState<T, V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(UnifiedRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UnifiedRenderer.class.getName());
 
     public UnifiedRenderer(DoomMain<T, V> DOOM) {
         super(DOOM);

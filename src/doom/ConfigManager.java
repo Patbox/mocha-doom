@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import java.util.regex.Pattern;
 import m.Settings;
 import static m.Settings.SETTINGS_MAP;
-import mochadoom.Loggers;
+
 import mochadoom.SystemHandler;
 import utils.ParseString;
 import utils.QuoteType;
@@ -42,7 +42,7 @@ import utils.ResourceIO;
  */
 public class ConfigManager {
 
-    private static final Logger LOGGER = Loggers.getLogger(ConfigManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConfigManager.class.getName());
 
     private static final Pattern SPLITTER = Pattern.compile("[ \t\n\r\f]+");
 

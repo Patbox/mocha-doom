@@ -7,12 +7,12 @@ import static data.Tables.ANG45;
 import static data.Tables.BITS32;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FRACUNIT;
 import static m.fixed_t.FixedDiv;
 import static m.fixed_t.FixedMul;
-import mochadoom.Loggers;
+
 import p.mobj_t;
 import static p.mobj_t.MF_SHADOW;
 import static rr.SceneRenderer.MINZ;
@@ -29,7 +29,7 @@ import v.graphics.Palettes;
 public final class VisSprites<V>
         implements IVisSpriteManagement<V> {
 
-    private static final Logger LOGGER = Loggers.getLogger(VisSprites.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(VisSprites.class.getName());
 
     private final static boolean DEBUG = false;
 

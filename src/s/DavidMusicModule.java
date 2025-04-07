@@ -2,7 +2,7 @@ package s;
 
 import java.io.ByteArrayInputStream;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
@@ -13,7 +13,6 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Transmitter;
-import mochadoom.Loggers;
 
 /** Concern separated from David Martel's MIDI & MUS player
  *  for Mocha Doom. Greatly improved upon by finnw, perfecting volume changes
@@ -26,7 +25,7 @@ import mochadoom.Loggers;
  */
 public class DavidMusicModule implements IMusic {
 
-    private static final Logger LOGGER = Loggers.getLogger(DavidMusicModule.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DavidMusicModule.class.getName());
 
     public static final int CHANGE_VOLUME = 7;
     public static final int CHANGE_VOLUME_FINE = 9;

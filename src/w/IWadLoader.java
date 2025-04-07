@@ -13,8 +13,7 @@ import static doom.SourceCode.W_Wad.W_Reload;
 import java.nio.ByteBuffer;
 import java.util.function.IntFunction;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.patch_t;
 import utils.GenericCopy.ArraySupplier;
 import v.graphics.Lights;
@@ -24,7 +23,7 @@ import v.tables.Playpal;
 
 public interface IWadLoader {
 
-    static final Logger LOGGER = Loggers.getLogger(IWadLoader.class.getName());
+    static final Logger LOGGER = Logger.getLogger(IWadLoader.class.getName());
 
     /**
      * W_Reload Flushes any of the reloadable lumps in memory and reloads the

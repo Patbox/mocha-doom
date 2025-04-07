@@ -12,10 +12,10 @@ import data.sounds.musicenum_t;
 import data.sounds.sfxenum_t;
 import doom.DoomMain;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FixedMul;
-import mochadoom.Loggers;
+
 import p.mobj_t;
 
 /**
@@ -28,7 +28,7 @@ import p.mobj_t;
  **/
 public class AbstractDoomAudio implements IDoomSound {
 
-    private static final Logger LOGGER = Loggers.getLogger(AbstractDoomAudio.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractDoomAudio.class.getName());
 
     protected final DoomMain<?, ?> DS;
     protected final IMusic IMUS;

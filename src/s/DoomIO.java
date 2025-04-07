@@ -8,12 +8,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 public class DoomIO {
 
-    private static final Logger LOGGER = Loggers.getLogger(DoomIO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomIO.class.getName());
 
     InputStream is;
     OutputStream os;

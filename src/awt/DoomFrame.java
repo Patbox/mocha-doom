@@ -16,10 +16,9 @@ import static java.awt.RenderingHints.VALUE_COLOR_RENDER_SPEED;
 import static java.awt.RenderingHints.VALUE_RENDER_SPEED;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import mochadoom.Logger;
 import javax.swing.JFrame;
 import mochadoom.Engine;
-import mochadoom.Loggers;
 import mochadoom.SystemHandler;
 
 /**
@@ -27,7 +26,7 @@ import mochadoom.SystemHandler;
  */
 public class DoomFrame<Window extends Component & DoomWindow<Window>> extends JFrame implements FullscreenOptions {
 
-    private static final Logger LOGGER = Loggers.getLogger(DoomFrame.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DoomFrame.class.getName());
 
     private static final long serialVersionUID = -4130528877723831825L;
 

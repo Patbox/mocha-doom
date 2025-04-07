@@ -63,6 +63,10 @@ public class SystemHandler {
         default boolean generateAlert(String title, String cause, boolean showCancelButton) {
             return false;
         }
+
+        default Logger getLogger(String className) {
+            return Logger.NOOP;
+        }
     }
 
 }

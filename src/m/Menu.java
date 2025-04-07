@@ -45,8 +45,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import mochadoom.SystemHandler;
 import rr.patch_t;
 import timing.DelegateTicker;
@@ -56,7 +55,7 @@ import w.DoomIO;
 
 public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
-    public static Logger LOGGER = Loggers.getLogger(Menu.class.getName());
+    public static Logger LOGGER = Logger.getLogger(Menu.class.getName());
 
     ////////////////// CONSTRUCTOR ////////////////
     public Menu(DoomMain<T, V> DOOM) {
@@ -257,10 +256,13 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
         var episodes = new ArrayList<menuitem_t>();
         episodes.add(new menuitem_t(1, "M_EPI1", Episode, SC_K));
-        episodes.add(new menuitem_t(1, "M_EPI2", Episode, SC_T));
-        episodes.add(new menuitem_t(1, "M_EPI3", Episode, SC_I));
-        if (DOOM.getGameMode() != GameMode.shareware && DOOM.getGameMode() != GameMode.registered) {
-            episodes.add(new menuitem_t(1, "M_EPI4", Episode, SC_T));
+        if (!DOOM.isCommercial()) {
+            episodes.add(new menuitem_t(1, "M_EPI2", Episode, SC_T));
+            episodes.add(new menuitem_t(1, "M_EPI3", Episode, SC_I));
+
+            if (DOOM.getGameMode() != GameMode.shareware && DOOM.getGameMode() != GameMode.registered) {
+                episodes.add(new menuitem_t(1, "M_EPI4", Episode, SC_T));
+            }
         }
 
         if (DOOM.mapInfo != null) {
@@ -780,7 +782,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
                 return;
             }
 
-            if (DOOM.isCommercial()) {
+            if (DOOM.isCommercial() && (DOOM.mapInfo == null || DOOM.mapInfo.episodes().isEmpty())) {
                 SetupNextMenu(NewDef);
             } else {
                 SetupNextMenu(EpiDef);

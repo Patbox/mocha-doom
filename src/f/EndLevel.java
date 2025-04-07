@@ -151,11 +151,8 @@ import doom.player_t;
 import doom.wbplayerstruct_t;
 import doom.wbstartstruct_t;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 import rr.patch_t;
 import static v.DoomGraphicSystem.V_NOSCALESTART;
 import static v.DoomGraphicSystem.V_SAFESCALE;
@@ -170,7 +167,7 @@ import static v.renderers.DoomScreen.FG;
  */
 public class EndLevel<T, V> extends AbstractEndLevel {
 
-    private static final Logger LOGGER = Loggers.getLogger(EndLevel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EndLevel.class.getName());
 
     ////////////////// STATUS ///////////////////
     private final DoomMain<T, V> DOOM;

@@ -2,13 +2,12 @@ package timing;
 
 import static data.Defines.TICRATE;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import mochadoom.Loggers;
+import mochadoom.Logger;
 
 public class NanoTicker
         implements ITicker {
 
-    private static final Logger LOGGER = Loggers.getLogger(NanoTicker.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(NanoTicker.class.getName());
 
     /**
      * I_GetTime
