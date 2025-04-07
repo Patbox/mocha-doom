@@ -217,7 +217,7 @@ public interface ActionsPlats extends ActionsMoveEvents, ActionsUseEvents {
          */
         // Uhh... lemme guess. Needs to resize?
         // Resize but leave extra items empty.
-        if (Engine.getConfig().equals(Settings.extend_plats_limit, Boolean.TRUE)) {
+        if (SystemHandler.instance.getConfig().equals(Settings.extend_plats_limit, Boolean.TRUE)) {
             plats.activeplats = C2JUtils.resizeNoAutoInit(plats.activeplats, 2 * plats.activeplats.length);
             AddActivePlat(plat);
         } else {

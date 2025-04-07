@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 import m.Settings;
 import mapinfo.MapInfo;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import p.mobj_t;
 
 /**
@@ -526,7 +527,7 @@ public abstract class DoomStatus<T, V> {
      */
     public static int compatibility_level;
 
-    public final ConfigManager CM = Engine.getConfig();
+    public final ConfigManager CM = SystemHandler.instance.getConfig();
 
     public DoomStatus() {
         this.wminfo = new wbstartstruct_t();

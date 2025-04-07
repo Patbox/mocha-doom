@@ -10,6 +10,7 @@ import m.Settings;
 import static m.fixed_t.FRACBITS;
 import static m.fixed_t.FixedMul;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import p.Resettable;
 import static utils.C2JUtils.eval;
 import static utils.C2JUtils.memset;
@@ -180,7 +181,7 @@ public class node_t implements Resettable {
                 < (left = ((x - this.x) >> FRACBITS) * (this.dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
     }
 
-    private static final boolean OLDDEMO = Engine.getConfig().equals(Settings.line_of_sight, Settings.LOS.Vanilla);
+    private static final boolean OLDDEMO = SystemHandler.instance.getConfig().equals(Settings.line_of_sight, Settings.LOS.Vanilla);
 
     public int DivlineSide(int x, int y, ISyncLogger SL, boolean sync) {
         int result = DivlineSide(x, y);

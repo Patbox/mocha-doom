@@ -28,6 +28,7 @@ import java.util.Map;
 import m.IRandom;
 import m.Settings;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import rr.patch_t;
 import v.DoomGraphicSystem;
 import v.graphics.Blocks;
@@ -111,9 +112,9 @@ abstract class SoftwareGraphicsSystem<T, V>
     private V palette(RendererFactory.WithWadLoader<T, V> rf) {
         /*final byte[] */
         playpal
-                = Engine.getCVM().bool(CommandVariable.GREYPAL)
+                = SystemHandler.instance.getCvars().bool(CommandVariable.GREYPAL)
                 ? Playpal.greypal()
-                : Engine.getCVM().bool(CommandVariable.NOPLAYPAL)
+                : SystemHandler.instance.getCvars().bool(CommandVariable.NOPLAYPAL)
                 ? Playpal.properPlaypal(null)
                 : rf.getWadLoader().LoadPlaypal();
 
@@ -134,8 +135,8 @@ abstract class SoftwareGraphicsSystem<T, V>
 
     @SuppressWarnings("unchecked")
     private V[] colormap(RendererFactory.WithWadLoader<T, V> rf) {
-        final boolean colormapEnabled = !Engine.getCVM().bool(CommandVariable.NOCOLORMAP)
-                && Engine.getConfig().equals(Settings.enable_colormap_lump, Boolean.TRUE);
+        final boolean colormapEnabled = !SystemHandler.instance.getCvars().bool(CommandVariable.NOCOLORMAP)
+                && SystemHandler.instance.getConfig().equals(Settings.enable_colormap_lump, Boolean.TRUE);
 
         return /**
                  * In Indexed mode, read COLORMAP lump can be used directly
@@ -338,7 +339,7 @@ abstract class SoftwareGraphicsSystem<T, V>
          * Because of switching gamma stops powerup palette except for invlunerablity
          * Settings.fixgammapalette handles the fix
          */
-        if (Engine.getConfig().equals(Settings.fix_gamma_palette, Boolean.FALSE)) {
+        if (SystemHandler.instance.getConfig().equals(Settings.fix_gamma_palette, Boolean.FALSE)) {
             this.usepalette = 0;
         }
 

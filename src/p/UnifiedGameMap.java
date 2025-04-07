@@ -446,7 +446,7 @@ public abstract class UnifiedGameMap implements ThinkerList {
             // Extremely rare event, We must be able to push more than MAXBUTTONS buttons
             // in one tic, which can't normally happen except in really pathological maps.
             // In any case, resizing should solve this problem.
-            if (Engine.getConfig().equals(Settings.extend_button_slots_limit, Boolean.TRUE)) {
+            if (SystemHandler.instance.getConfig().equals(Settings.extend_button_slots_limit, Boolean.TRUE)) {
                 buttonlist = C2JUtils.resize(buttonlist[0], buttonlist, buttonlist.length * 2);
                 // Try again
                 StartButton(line, w, texture, time);

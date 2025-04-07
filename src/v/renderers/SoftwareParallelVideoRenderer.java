@@ -41,10 +41,10 @@ abstract class SoftwareParallelVideoRenderer<T, V> extends SoftwareGraphicsSyste
     // How many threads it will use, but default it uses all avalable cores
     private static final int[] EMPTY_INT_PALETTED_BLOCK = new int[0];
     private static final short[] EMPTY_SHORT_PALETTED_BLOCK = new short[0];
-    protected static final int PARALLELISM = Engine.getConfig().getValue(Settings.parallelism_realcolor_tint, Integer.class);
+    protected static final int PARALLELISM = SystemHandler.instance.getConfig().getValue(Settings.parallelism_realcolor_tint, Integer.class);
     protected static final GraphicsConfiguration GRAPHICS_CONF = SystemHandler.instance.getGraphicsConfiguration();
 
-    protected final boolean GRAYPAL_SET = Engine.getCVM().bool(CommandVariable.GREYPAL);
+    protected final boolean GRAYPAL_SET = SystemHandler.instance.getCvars().bool(CommandVariable.GREYPAL);
 
     /**
      * It will render much faster on machines with display already in HiColor mode

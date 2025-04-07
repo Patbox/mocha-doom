@@ -21,6 +21,7 @@ import doom.DoomMain;
 import java.util.function.Function;
 import m.Settings;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import rr.SceneRenderer;
 import rr.UnifiedRenderer;
 import rr.parallel.ParallelRenderer;
@@ -34,9 +35,9 @@ public enum SceneRendererMode {
     Parallel(SceneRendererMode::Parallel_8, SceneRendererMode::Parallel_16, SceneRendererMode::Parallel_32),
     Parallel2(SceneRendererMode::Parallel2_8, SceneRendererMode::Parallel2_16, SceneRendererMode::Parallel2_32);
 
-    private static final boolean cVarSerial = Engine.getCVM().bool(CommandVariable.SERIALRENDERER);
-    private static final boolean cVarParallel = Engine.getCVM().present(CommandVariable.PARALLELRENDERER);
-    private static final boolean cVarParallel2 = Engine.getCVM().present(CommandVariable.PARALLELRENDERER2);
+    private static final boolean cVarSerial = SystemHandler.instance.getCvars().bool(CommandVariable.SERIALRENDERER);
+    private static final boolean cVarParallel = SystemHandler.instance.getCvars().present(CommandVariable.PARALLELRENDERER);
+    private static final boolean cVarParallel2 = SystemHandler.instance.getCvars().present(CommandVariable.PARALLELRENDERER2);
     private static final int[] threads = cVarSerial ? null : cVarParallel
             ? parseSwitchConfig(CommandVariable.PARALLELRENDERER)
             : cVarParallel2
@@ -55,11 +56,11 @@ public enum SceneRendererMode {
 
     static int[] parseSwitchConfig(CommandVariable sw) {
         // Try parsing walls, or default to 1
-        final int walls = Engine.getCVM().get(sw, Integer.class, 0).orElse(1);
+        final int walls = SystemHandler.instance.getCvars().get(sw, Integer.class, 0).orElse(1);
         // Try parsing floors. If wall succeeded, but floors not, it will default to 1.
-        final int floors = Engine.getCVM().get(sw, Integer.class, 1).orElse(1);
+        final int floors = SystemHandler.instance.getCvars().get(sw, Integer.class, 1).orElse(1);
         // In the worst case, we will use the defaults.
-        final int masked = Engine.getCVM().get(sw, Integer.class, 2).orElse(2);
+        final int masked = SystemHandler.instance.getCvars().get(sw, Integer.class, 2).orElse(2);
         return new int[]{walls, floors, masked};
     }
 
@@ -86,7 +87,7 @@ public enum SceneRendererMode {
          * Set default parallelism config in this case
          * TODO: make able to choose in config, but on ONE line along with scene_renderer_mode, should be tricky!
          */
-        return Engine.getConfig().getValue(Settings.scene_renderer_mode, SceneRendererMode.class);
+        return SystemHandler.instance.getConfig().getValue(Settings.scene_renderer_mode, SceneRendererMode.class);
     }
 
     private static SceneRenderer<byte[], byte[]> Parallel_8(DoomMain<byte[], byte[]> DOOM) {

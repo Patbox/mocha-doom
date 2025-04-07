@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import w.IWritableDoomObject;
 
 // Emacs style mode select   -*- Java -*-
@@ -58,7 +59,7 @@ public abstract class MenuMisc {
     public static boolean WriteFile(String name, byte[] source, int length) {
         OutputStream handle;
         try {
-            handle = new FileOutputStream(name);
+            handle = SystemHandler.instance.getSaveDataOutputStream(name);
             handle.write(source, 0, length);
             handle.close();
         } catch (Exception e) {
@@ -72,7 +73,7 @@ public abstract class MenuMisc {
     public static boolean WriteFile(String name, IWritableDoomObject source) {
         DataOutputStream handle;
         try {
-            handle = new DataOutputStream(new FileOutputStream(name));
+            handle = new DataOutputStream(SystemHandler.instance.getSaveDataOutputStream(name));
             source.write(handle);
             handle.close();
         } catch (Exception e) {
@@ -94,7 +95,7 @@ public abstract class MenuMisc {
         // struct stat fileinfo;
         ByteBuffer buf;
         try {
-            handle = new BufferedInputStream(new FileInputStream(name));
+            handle = new BufferedInputStream(SystemHandler.instance.getSaveDataInputStream(name));
             length = (int) handle.available();
             buf = ByteBuffer.allocate(length);
             handle.read(buf.array());
@@ -114,7 +115,7 @@ public abstract class MenuMisc {
         // struct stat fileinfo;
         byte[] buf;
         try {
-            handle = new BufferedInputStream(new FileInputStream(name));
+            handle = new BufferedInputStream(SystemHandler.instance.getSaveDataInputStream(name));
             length = (int) handle.available();
             buf = new byte[length];
             count = handle.read(buf);
@@ -190,9 +191,8 @@ public abstract class MenuMisc {
 
         DataOutputStream f = null;
         try {
-            f = new DataOutputStream(new FileOutputStream(filename));
-
-        } catch (FileNotFoundException e) {
+            f = new DataOutputStream(SystemHandler.instance.getSaveDataOutputStream(filename));
+        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "WritePCXfile: not found", e);
         }
 
@@ -215,7 +215,7 @@ public abstract class MenuMisc {
         short[] shd = sh.getData();
         System.arraycopy(linear, 0, shd, 0, Math.min(linear.length, shd.length));
         try {
-            ImageIO.write(buf, "PNG", new File(imagename));
+            ImageIO.write(buf, "PNG", SystemHandler.instance.getSaveDataOutputStream(imagename));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "WritePNGfile: I/O error", e);
         }
@@ -227,7 +227,7 @@ public abstract class MenuMisc {
         int[] shd = sh.getData();
         System.arraycopy(linear, 0, shd, 0, Math.min(linear.length, shd.length));
         try {
-            ImageIO.write(buf, "PNG", new File(imagename));
+            ImageIO.write(buf, "PNG", SystemHandler.instance.getSaveDataOutputStream(imagename));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "WritePNGfile: I/O error", e);
         }
@@ -239,7 +239,7 @@ public abstract class MenuMisc {
         byte[] shd = sh.getData();
         System.arraycopy(linear, 0, shd, 0, Math.min(linear.length, shd.length));
         try {
-            ImageIO.write(buf, "PNG", new File(imagename));
+            ImageIO.write(buf, "PNG", SystemHandler.instance.getSaveDataOutputStream(imagename));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "WritePNGfile: I/O error", e);
         }

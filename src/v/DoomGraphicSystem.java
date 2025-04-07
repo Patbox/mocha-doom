@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import m.IRandom;
 import m.Settings;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import rr.patch_t;
 import v.graphics.Horizontal;
 import v.graphics.Plotter;
@@ -207,7 +208,7 @@ public interface DoomGraphicSystem<T, V> {
      * Plotter for point-by-point drawing of AutoMap
      */
     default Plotter<V> createPlotter(DoomScreen screen) {
-        switch (Engine.getConfig().getValue(Settings.automap_plotter_style, Plotter.Style.class)) {
+        switch (SystemHandler.instance.getConfig().getValue(Settings.automap_plotter_style, Plotter.Style.class)) {
             case Thick:
                 return new Plotter.Thick<>(getScreen(screen), getScreenWidth(), getScreenHeight());
             case Deep:

@@ -23,6 +23,7 @@ import java.awt.Transparency;
 import java.util.function.Function;
 import m.Settings;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import rr.SceneRenderer;
 import v.DoomGraphicSystem;
 
@@ -68,7 +69,7 @@ public enum BppMode {
         } else if (CVM.bool(CommandVariable.ALPHATRUECOLOR)) {
             return AlphaTrueColor;
         } else {
-            return Engine.getConfig().getValue(Settings.color_depth, BppMode.class);
+            return SystemHandler.instance.getConfig().getValue(Settings.color_depth, BppMode.class);
         }
     }
 

@@ -266,7 +266,6 @@ public class DoomSystem implements IDoomSystem {
     // This particular implementation will generate a popup box.//
     @Override
     public boolean GenerateAlert(String title, String cause, boolean showCancelButton) {
-        MsgBox alert = new MsgBox(null, title, cause, showCancelButton);
-        return alert.isOk();
+        return SystemHandler.instance.generateAlert(title, cause, showCancelButton);
     }
 }

@@ -19,6 +19,7 @@ package v.tables;
 import java.util.TreeMap;
 import m.Settings;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import v.graphics.Colors;
 import static v.graphics.Lights.COLORMAP_BLURRY;
 import static v.graphics.Lights.COLORMAP_FIXED;
@@ -53,8 +54,8 @@ public class BlurryTable implements FuzzMix, Colors {
     private final byte[] LUT_g5;
     private final byte[] LUT_b5;
 
-    private final boolean semiTranslucent = Engine.getConfig().equals(Settings.semi_translucent_fuzz, Boolean.TRUE);
-    private final boolean fuzzMix = Engine.getConfig().equals(Settings.fuzz_mix, Boolean.TRUE);
+    private final boolean semiTranslucent = SystemHandler.instance.getConfig().equals(Settings.semi_translucent_fuzz, Boolean.TRUE);
+    private final boolean fuzzMix = SystemHandler.instance.getConfig().equals(Settings.fuzz_mix, Boolean.TRUE);
 
     /**
      * Only support indexed "BLURRYMAP" with indexed colorMap

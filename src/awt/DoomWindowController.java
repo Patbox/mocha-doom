@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import m.Settings;
 import mochadoom.Engine;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 
 /**
  * Display, its configuration and resolution related stuff,
@@ -81,7 +82,7 @@ public class DoomWindowController<E extends Component & DoomWindow<E>, H extends
 
     private void sizeInit() {
         try {
-            if (!(Engine.getConfig().equals(Settings.fullscreen, Boolean.TRUE) && switchToFullScreen())) {
+            if (!(SystemHandler.instance.getConfig().equals(Settings.fullscreen, Boolean.TRUE) && switchToFullScreen())) {
                 updateSize();
             }
         } catch (Exception e) {

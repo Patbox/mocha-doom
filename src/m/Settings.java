@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import utils.QuoteType;
 import v.graphics.Plotter;
 import v.renderers.BppMode;
@@ -198,7 +199,7 @@ public enum Settings {
     private Files configBase;
 
     public boolean is(Object obj) {
-        return Engine.getConfig().equals(obj);
+        return SystemHandler.instance.getConfig().equals(obj);
     }
 
     public ConfigManager.UpdateStatus hasChange(boolean b) {

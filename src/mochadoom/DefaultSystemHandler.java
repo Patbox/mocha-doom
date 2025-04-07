@@ -1,5 +1,6 @@
 package mochadoom;
 
+import awt.MsgBox;
 import doom.*;
 import s.*;
 import utils.C2JUtils;
@@ -409,5 +410,11 @@ public record DefaultSystemHandler() implements SystemHandler.Impl {
         }
 
         return new FileOutputStream(name);
+    }
+
+    @Override
+    public boolean generateAlert(String title, String cause, boolean showCancelButton) {
+        MsgBox alert = new MsgBox(null, title, cause, showCancelButton);
+        return alert.isOk();
     }
 }

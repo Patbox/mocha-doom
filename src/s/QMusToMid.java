@@ -514,8 +514,8 @@ public class QMusToMid {
 
     int convert(String mus, String mid, boolean nodisplay, int div,
             int size, boolean nocomp, Ptr<Integer> ow) throws IOException {
-        InputStream is = new BufferedInputStream(new FileInputStream(new File(mid)));
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(mid)));
+        InputStream is = new BufferedInputStream(SystemHandler.instance.getSaveDataInputStream(mid));
+        OutputStream os = new BufferedOutputStream(SystemHandler.instance.getSaveDataOutputStream(mid));
 
         int error;
         //struct stat file_data ;

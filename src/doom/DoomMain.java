@@ -543,7 +543,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
                 String filename = "debug" + consoleplayer + ".txt";
                 LOGGER.log(Level.INFO, String.format("Debug output to: %s", filename));
                 try {
-                    debugfile = new OutputStreamWriter(new FileOutputStream(filename));
+                    debugfile = new OutputStreamWriter(SystemHandler.instance.getSaveDataOutputStream(filename));
                 } catch (FileNotFoundException e) {
                     LOGGER.log(Level.SEVERE, "Couldn't open debugfile.", e);
                 }
@@ -1263,7 +1263,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
          * @SourceCode.Compatible
          */
 
-        if (Engine.getConfig().equals(Settings.fix_sky_change, Boolean.TRUE) && (isCommercial()
+        if (SystemHandler.instance.getConfig().equals(Settings.fix_sky_change, Boolean.TRUE) && (isCommercial()
                 || (gamemission == GameMission_t.pack_tnt)
                 || (gamemission == GameMission_t.pack_plut))) {
             // Set the sky map.
@@ -2738,7 +2738,7 @@ public class DoomMain<T, V> extends DoomStatus<T, V> implements IDoomGameNetwork
         Arrays.setAll(players, i -> new player_t(this));
 
         // Init objects
-        this.cVarManager = Engine.getCVM();
+        this.cVarManager = SystemHandler.instance.getCvars();
 
         // Prepare events array with event instances
         Arrays.fill(events, event_t.EMPTY_EVENT);

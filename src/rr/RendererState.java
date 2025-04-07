@@ -52,6 +52,8 @@ import static m.fixed_t.FixedMul;
 import mochadoom.Engine;
 import mochadoom.Loggers;
 import static p.ActiveStates.P_MobjThinker;
+
+import mochadoom.SystemHandler;
 import p.mobj_t;
 import rr.drawfuns.ColFuncs;
 import rr.drawfuns.ColVars;
@@ -2345,7 +2347,7 @@ public abstract class RendererState<T, V> implements SceneRenderer<T, V>, ILimit
     @Override
     @R_Draw.C(R_FillBackScreen)
     public void FillBackScreen() {
-        final boolean scaleSetting = Engine.getConfig().equals(Settings.scale_screen_tiles, Boolean.TRUE);
+        final boolean scaleSetting = SystemHandler.instance.getConfig().equals(Settings.scale_screen_tiles, Boolean.TRUE);
         flat_t src;
         DoomScreen dest;
         int x;

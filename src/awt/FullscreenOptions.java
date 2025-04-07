@@ -26,7 +26,7 @@ import static java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR;
 import static java.awt.RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
 import java.awt.image.ImageObserver;
 import m.Settings;
-import mochadoom.Engine;
+import mochadoom.SystemHandler;
 
 /**
  * Full-screen switch and scale governor
@@ -87,9 +87,9 @@ public interface FullscreenOptions {
         Best, Native;
     }
 
-    static FullMode FULLMODE = Engine.getConfig().getValue(Settings.fullscreen_mode, FullMode.class);
-    static StretchMode STRETCH = Engine.getConfig().getValue(Settings.fullscreen_stretch, StretchMode.class);
-    static InterpolationMode INTERPOLATION = Engine.getConfig().getValue(Settings.fullscreen_interpolation, InterpolationMode.class);
+    static FullMode FULLMODE = SystemHandler.instance.getConfig().getValue(Settings.fullscreen_mode, FullMode.class);
+    static StretchMode STRETCH = SystemHandler.instance.getConfig().getValue(Settings.fullscreen_stretch, StretchMode.class);
+    static InterpolationMode INTERPOLATION = SystemHandler.instance.getConfig().getValue(Settings.fullscreen_interpolation, InterpolationMode.class);
 
     interface Dimension {
 

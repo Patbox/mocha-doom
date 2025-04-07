@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import m.Settings;
 import mochadoom.Engine;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import p.Actions.ActionsLights.glow_t;
 import p.Actions.ActionsLights.lightflash_t;
 import static p.ActiveStates.NOP;
@@ -492,7 +493,7 @@ public class VanillaDSG<T, V> implements IDoomSaveGame {
             }
         }
 
-        if (Engine.getConfig().equals(Settings.reconstruct_savegame_pointers, Boolean.TRUE)) {
+        if (SystemHandler.instance.getConfig().equals(Settings.reconstruct_savegame_pointers, Boolean.TRUE)) {
             reconstructPointers();
             rewirePointers();
         }

@@ -121,16 +121,20 @@ public class Engine {
                 }, SC_LALT)
         ).addInterest(
                 new KeyStateInterest<>(obs -> {
-                    if (!windowController.isFullscreen() && !DOOM.mousecaptured && DOOM.menuactive) {
+                    if (!DOOM.mousecaptured && DOOM.menuactive) {
                         EventHandler.menuCaptureChanges(obs, DOOM.mousecaptured = true);
+                    } else if (DOOM.mousecaptured && !DOOM.menuactive) {
+                        EventHandler.menuCaptureChanges(obs, DOOM.mousecaptured = false);
                     }
 
                     return WANTS_MORE_PASS;
                 }, SC_ESCAPE)
         ).addInterest(
                 new KeyStateInterest<>(obs -> {
-                    if (!windowController.isFullscreen() && !DOOM.mousecaptured && DOOM.paused) {
+                    if (!DOOM.mousecaptured && DOOM.paused) {
                         EventHandler.menuCaptureChanges(obs, DOOM.mousecaptured = true);
+                    } else if (DOOM.mousecaptured && !DOOM.paused) {
+                        EventHandler.menuCaptureChanges(obs, DOOM.mousecaptured = false);
                     }
                     return WANTS_MORE_PASS;
                 }, SC_PAUSE)
@@ -186,13 +190,5 @@ public class Engine {
 
     public static ConfigManager _getConfig() {
         return getEngine().cm;
-    }
-
-    public static CVarManager getCVM() {
-        return SystemHandler.instance.getCvars();
-    }
-
-    public static ConfigManager getConfig() {
-        return SystemHandler.instance.getConfig();
     }
 }

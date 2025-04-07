@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import mochadoom.Engine;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 
 /**
  * Common code for Doom's video frames
@@ -177,7 +178,7 @@ public class DoomFrame<Window extends Component & DoomWindow<Window>> extends JF
         return localG2d;
     }
 
-    private final boolean showFPS = Engine.getCVM().bool(CommandVariable.SHOWFPS);
+    private final boolean showFPS = SystemHandler.instance.getCvars().bool(CommandVariable.SHOWFPS);
     private long lastTime = System.currentTimeMillis();
     private int frames = 0;
 }

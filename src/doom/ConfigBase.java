@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import m.Settings;
 import mochadoom.Engine;
+import mochadoom.SystemHandler;
 import utils.OSValidator;
 import utils.ResourceIO;
 
@@ -159,12 +160,12 @@ public enum ConfigBase {
 
         private static String getFolder() {
             return folder != null ? folder : (folder
-                    = Engine.getCVM().bool(CommandVariable.SHDEV)
-                    || Engine.getCVM().bool(CommandVariable.REGDEV)
-                    || Engine.getCVM().bool(CommandVariable.FR1DEV)
-                    || Engine.getCVM().bool(CommandVariable.FRDMDEV)
-                    || Engine.getCVM().bool(CommandVariable.FR2DEV)
-                    || Engine.getCVM().bool(CommandVariable.COMDEV)
+                    = SystemHandler.instance.getCvars().bool(CommandVariable.SHDEV)
+                    || SystemHandler.instance.getCvars().bool(CommandVariable.REGDEV)
+                    || SystemHandler.instance.getCvars().bool(CommandVariable.FR1DEV)
+                    || SystemHandler.instance.getCvars().bool(CommandVariable.FRDMDEV)
+                    || SystemHandler.instance.getCvars().bool(CommandVariable.FR2DEV)
+                    || SystemHandler.instance.getCvars().bool(CommandVariable.COMDEV)
                     ? dstrings.DEVDATA + System.getProperty("file.separator")
                     : "");
         }
@@ -180,7 +181,7 @@ public enum ConfigBase {
         /**
          * If user supplied -config argument, it will only use the values from these files instead of defaults
          */
-        if (!Engine.getCVM()
+        if (!SystemHandler.instance.getCvars()
                 .with(CommandVariable.CONFIG, 0, (String[] fileNames)
                         -> Arrays.stream(fileNames).map(fileName -> new Files(fileName, true)).forEach(ret::add)) /**
                  * If there is no such argument, load default.cfg (or .doomrc) and mochadoom.cfg

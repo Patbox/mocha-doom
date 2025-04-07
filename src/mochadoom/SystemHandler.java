@@ -59,6 +59,10 @@ public class SystemHandler {
         default OutputStream getSaveDataOutputStream(String name) throws IOException {
             throw new IOException("getSaveDataOutputSteam not implemented!");
         }
+
+        default boolean generateAlert(String title, String cause, boolean showCancelButton) {
+            return false;
+        }
     }
 
 }

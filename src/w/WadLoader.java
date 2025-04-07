@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import mochadoom.Loggers;
+import mochadoom.SystemHandler;
 import rr.patch_t;
 import utils.C2JUtils;
 import utils.GenericCopy.ArraySupplier;
@@ -342,7 +343,7 @@ public class WadLoader implements IWadLoader {
         }
 
         try {
-            handle = new DataInputStream(new BufferedInputStream(new FileInputStream(reloadname)));
+            handle = new DataInputStream(SystemHandler.instance.getSaveDataInputStream(reloadname));
         } catch (Exception e) {
             I.Error("W_Reload: couldn't open %s", reloadname);
         }

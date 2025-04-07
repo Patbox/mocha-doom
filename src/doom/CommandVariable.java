@@ -16,6 +16,8 @@
  */
 package doom;
 
+import timing.RemoteTicker;
+
 /**
  * A new way to define Command Line Arguments for the Engine
  *
@@ -78,7 +80,7 @@ public enum CommandVariable {
     JAVARANDOM,
     GREYPAL,
 
-    TICKERACCURACY(Integer.class), HIDEDISKDRAWER();
+    TICKERACCURACY(Integer.class), HIDEDISKDRAWER(), SLEEPTYPE(RemoteTicker.SleepType.class);
 
     public final char prefix;
     public final Class<?>[] arguments;

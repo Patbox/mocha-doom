@@ -23,6 +23,8 @@ import mochadoom.Engine;
 import mochadoom.Loggers;
 import static p.mobj_t.MF_NOBLOCKMAP;
 import static p.mobj_t.MF_NOSECTOR;
+
+import mochadoom.SystemHandler;
 import rr.line_t;
 import rr.node_t;
 import rr.sector_t;
@@ -747,7 +749,7 @@ public abstract class AbstractLevelLoader implements ILevelLoader {
     // Full 512x512 blockmaps get this value set to -1.
     // A 511x511 blockmap would still have a valid negative number
     // e.g. -1..510, so they would be set to -2
-    public static final boolean FIX_BLOCKMAP_512 = Engine.getConfig().equals(Settings.fix_blockmap, Boolean.TRUE);
+    public static final boolean FIX_BLOCKMAP_512 = SystemHandler.instance.getConfig().equals(Settings.fix_blockmap, Boolean.TRUE);
     public int blockmapxneg = -257;
     public int blockmapyneg = -257;
 
