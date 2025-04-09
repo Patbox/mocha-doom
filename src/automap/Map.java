@@ -236,7 +236,7 @@ public class Map<T, V> implements IAutoMap<T, V> {
      * Use colormap-specific colors to support extended modes.
      * Moved hardcoding in here. Potentially configurable.
      */
-    enum Color {
+    public enum Color {
         CLOSE_TO_BLACK(1, (byte) 246),
         REDS(16, (byte) 176 /*(256 - 5 * 16)*/),
         BLUES(8, (byte) 200 /*(256 - 4 * 16 + 8)*/),

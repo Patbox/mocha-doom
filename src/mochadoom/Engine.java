@@ -89,17 +89,19 @@ public class Engine {
         this.DOOM = new DoomMain<>();
 
         // opens a window
+        var scale = cvm.get(CommandVariable.MULTIPLYWINDOW, Integer.class, 0).orElse(1);
+
         this.windowController = /*cvm.bool(CommandVariable.AWTFRAME)
             ? */ DoomWindow.createCanvasWindowController(
                         DOOM.graphicSystem::getScreenImage,
                         DOOM::PostEvent,
-                        DOOM.graphicSystem.getScreenWidth(),
-                        DOOM.graphicSystem.getScreenHeight()
+                        DOOM.graphicSystem.getScreenWidth() * scale,
+                        DOOM.graphicSystem.getScreenHeight() * scale
                 )/* : DoomWindow.createJPanelWindowController(
                 DOOM.graphicSystem::getScreenImage,
                 DOOM::PostEvent,
-                DOOM.graphicSystem.getScreenWidth(),
-                DOOM.graphicSystem.getScreenHeight()
+                DOOM.graphicSystem.getScreenWidth() * scale,
+                DOOM.graphicSystem.getScreenHeight() * scale
             )*/;
 
         windowController.getObserver().addInterest(

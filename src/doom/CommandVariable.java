@@ -27,7 +27,7 @@ public enum CommandVariable {
     DISP(String.class), GEOM(String[].class), CONFIG(String[].class), TRANMAP(String.class),
     PLAYDEMO(String.class), FASTDEMO(String.class), TIMEDEMO(String.class), RECORD(String.class), STATCOPY(String.class),
     TURBO(Integer.class), SKILL(Integer.class), EPISODE(Integer.class), TIMER(Integer.class), PORT(Integer.class),
-    MULTIPLY(Integer.class), WIDTH(Integer.class), HEIGHT(Integer.class),
+    MULTIPLY(Integer.class), MULTIPLYWINDOW(Integer.class), WIDTH(Integer.class), HEIGHT(Integer.class),
     PARALLELRENDERER(Integer.class, Integer.class, Integer.class),
     PARALLELRENDERER2(Integer.class, Integer.class, Integer.class),
     LOADGAME(Character.class), DUP(Character.class),

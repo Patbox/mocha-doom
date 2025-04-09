@@ -1611,7 +1611,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
             ReadDef1.x = skullx;
             ReadDef1.y = skully;
-            DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName(lumpname), DOOM.vs, 0, 0);
+            DOOM.graphicSystem.DrawPatchCenteredScaled(FG, DOOM.wadLoader.CachePatchName(lumpname), DOOM.vs, 0, 0);
             // Maes: we need to do this here, otherwide the status bar appears "dirty"
             DOOM.statusBar.forceRefresh();
         }
@@ -1634,7 +1634,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
 
             ReadDef2.x = skullx;
             ReadDef2.y = skully;
-            DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName(lumpname), DOOM.vs, 0, 0);
+            DOOM.graphicSystem.DrawPatchCenteredScaled(FG, DOOM.wadLoader.CachePatchName(lumpname), DOOM.vs, 0, 0);
             // Maes: we need to do this here, otherwide the status bar appears "dirty"
             DOOM.statusBar.forceRefresh();
         }
