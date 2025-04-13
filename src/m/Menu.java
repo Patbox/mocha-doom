@@ -51,6 +51,7 @@ import rr.patch_t;
 import timing.DelegateTicker;
 import utils.C2JUtils;
 import static v.renderers.DoomScreen.FG;
+
 import w.DoomIO;
 
 public class Menu<T, V> extends AbstractDoomMenu<T, V> {
@@ -1540,6 +1541,7 @@ public class Menu<T, V> extends AbstractDoomMenu<T, V> {
         @Override
         public void invoke() {
             DOOM.graphicSystem.DrawPatchScaled(FG, DOOM.wadLoader.CachePatchName("M_DOOM"), DOOM.vs, 94, 2);
+            //DOOM.headsUp.font.drawString(FG, "Mocha Doom v1.6", 2, VideoScale.BASE_HEIGHT - 10);
         }
     }
 

@@ -125,12 +125,8 @@ package f;
 //	Intermission screens.
 //
 //-----------------------------------------------------------------------------*/
-import static data.Defines.BT_ATTACK;
-import static data.Defines.BT_USE;
-import static data.Defines.NUMMAPS;
-import static data.Defines.PU_CACHE;
-import static data.Defines.PU_STATIC;
-import static data.Defines.TICRATE;
+import static data.Defines.*;
+import static data.Defines.HU_FONTSIZE;
 import static data.Limits.MAXPLAYERS;
 import data.sounds.musicenum_t;
 import data.sounds.sfxenum_t;
@@ -152,6 +148,8 @@ import doom.wbplayerstruct_t;
 import doom.wbstartstruct_t;
 
 import java.util.logging.Level;
+
+import hu.HU;
 import mochadoom.Logger;
 import rr.patch_t;
 import static v.DoomGraphicSystem.V_NOSCALESTART;
@@ -409,6 +407,11 @@ public class EndLevel<T, V> extends AbstractEndLevel {
 
             // draw "Finished!"
             y += (5 * patch.height) / 4;
+        } else if (entry != null) {
+            var string = entry.levelName + (entry.author != null ? "\nBY: " + entry.author : "");
+            DOOM.headsUp.font.drawCentered(FG, string, 320 / 2, y);
+
+            y += (5 * DOOM.headsUp.font.getHeight(string)) / 4;
         }
 
         DOOM.graphicSystem.DrawPatchScaled(FG, finished, DOOM.vs, (320 - finished.width) / 2, y);
@@ -449,9 +452,13 @@ public class EndLevel<T, V> extends AbstractEndLevel {
                 y += (5 * patch.height) / 4;
             }
             // draw level.
+            DOOM.graphicSystem.DrawPatchScaled(FG, patch, DOOM.vs, (320 - patch.width) / 2, y);
+        } else if (entry != null) {
+            y += (entering.height * 5) / 4;
+            var string = entry.levelName + (entry.author != null ? "\nBY: " + entry.author : "");
+            DOOM.headsUp.font.drawCentered(FG, string, 320 / 2, y);
         }
 
-        DOOM.graphicSystem.DrawPatchScaled(FG, patch, DOOM.vs, (320 - patch.width) / 2, y);
     }
 
     /**

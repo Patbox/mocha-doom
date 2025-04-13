@@ -52,6 +52,8 @@ import static doom.englsh.*;
 import doom.event_t;
 import doom.evtype_t;
 import doom.player_t;
+import font.DoomFont;
+import font.HudFont;
 import g.Signals.ScanCode;
 import java.awt.Rectangle;
 import java.util.Arrays;
@@ -111,7 +113,9 @@ public class HU implements IHeadsUp {
 
     // MAES: a whole lot of "static" stuff which really would be HU instance
     // status.
-    patch_t[] hu_font = new patch_t[HU_FONTSIZE];
+    final patch_t[] hu_font = new patch_t[HU_FONTSIZE];
+
+    public final DoomFont font;
 
     char[] chat_dest = new char[MAXPLAYERS];
 
@@ -384,6 +388,7 @@ public class HU implements IHeadsUp {
         }
         this.w_title = new hu_textline_t();
         this.w_chat = new hu_itext_t();
+        this.font = new HudFont(DOOM);
     }
 
     /**
@@ -1091,7 +1096,7 @@ public class HU implements IHeadsUp {
 
     // Text Line widget
     // (parent of Scrolling Text and Input Text widgets)
-    class hu_textline_t {
+    public class hu_textline_t {
 
         // left-justified position of scrolling text window
         int x;

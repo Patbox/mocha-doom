@@ -5,7 +5,10 @@ nbproject/private/
 build/
 dist/
 *.wad
+*.WAD
 !wads/doomshareware/doom1.wad
+!wads/doomshareware/freedoom1.wad
+!wads/doomshareware/freedoom2.wad
 *.dsg
 build.xml
 nbproject/
